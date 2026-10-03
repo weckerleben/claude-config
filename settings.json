@@ -1,0 +1,204 @@
+{
+  "skillListingBudgetFraction": 0.03,
+  "env": {
+    "ECC_HOOK_PROFILE": "standard",
+    "ECC_DISABLED_HOOKS": "pre:edit-write:gateguard-fact-force",
+    "ECC_SESSION_START_MAX_CHARS": "2000",
+    "COMPACT_THRESHOLD": "30"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git restore:*)",
+      "Bash(git stash:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git worktree:*)",
+      "Bash(git tag:*)",
+      "Bash(git tag -d:*)",
+      "Bash(git config -l)",
+      "Bash(git config --get:*)",
+      "Bash(docker:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker-compose:*)",
+      "Bash(pytest:*)",
+      "Bash(ruff:*)",
+      "Bash(black:*)",
+      "Bash(mypy:*)",
+      "Bash(pylint:*)",
+      "Bash(pylint-odoo:*)",
+      "Bash(uv:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
+      "Bash(odoo-bin:*)",
+      "Bash(./venv/bin/python:*)",
+      "Bash(./venv/bin/pytest:*)",
+      "Bash(npm:*)",
+      "Bash(pnpm:*)",
+      "Bash(yarn:*)",
+      "Bash(bun:*)",
+      "Bash(tsc:*)",
+      "Bash(eslint:*)",
+      "Bash(prettier:*)",
+      "Bash(vitest:*)",
+      "Bash(next:*)",
+      "Bash(go:*)",
+      "Bash(gofmt:*)",
+      "Bash(cargo:*)",
+      "Bash(rustc:*)",
+      "Bash(rustup:*)",
+      "Bash(psql:*)",
+      "Bash(pg_dump:*)",
+      "Bash(pg_dumpall:*)",
+      "Bash(redis-cli:*)",
+      "Bash(supabase:*)",
+      "Bash(gh:*)",
+      "Bash(claude mcp:*)",
+      "Bash(claude plugin:*)",
+      "Bash(brew list:*)",
+      "Bash(brew info:*)",
+      "Bash(brew search:*)",
+      "Bash(brew services list)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(which:*)",
+      "Bash(echo:*)",
+      "Bash(tree:*)",
+      "Bash(jq:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(diff:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(df:*)",
+      "Bash(du:*)",
+      "Bash(pwd)",
+      "Bash(date)",
+      "Bash(open:*)"
+    ],
+    "deny": [
+      "Read(**/*.keystore)"
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /Users/weckerleben/.claude/scripts/hooks/weck-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /Users/weckerleben/.claude/scripts/hooks/frontend-design-gate.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /Users/weckerleben/.claude/scripts/hooks/orchestration-gate.js"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "ecc@ecc": true,
+    "cashea-engineering@cashea-skills": true,
+    "cashea-marketplace@cashea-skills": true,
+    "cashea-hub@cashea-skills": true,
+    "cashea-web@cashea-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "ecc": {
+      "source": {
+        "source": "directory",
+        "path": "/Users/weckerleben/dev/ecc"
+      }
+    },
+    "cashea-skills": {
+      "source": {
+        "source": "github",
+        "repo": "cashea-bnpl/cashea-skills"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "high"
+    },
+    "claude-opus-4-8": {
+      "effortLevel": "xhigh"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: Not queryable here (no origin remote / org-repo not derivable) — assume private per shipped default",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: Not queryable here (no origin remote); default branch unknown (origin/HEAD unset)",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: The trusted repo and its remote(s) only — no remotes configured in this checkout",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured — bucket names found in repo config (bucket, my_bucket, my-bucket, example-bucket, bucket-name, etc.) are generic/placeholder-style names spread across many files and are not usage-corroborated (no matching bucket names appear in the transcript-mining sections); not adopted",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (Odoo/Python, TypeScript/Next.js, PostgreSQL, Docker/CI/CD per global CLAUDE.md)",
+      "**Trusted repo**: No git repository detected at the current working directory (0 tracked files, no remotes) — no repo-scoped trust to apply here; treat this location as untrusted for repo-scoped carve-outs until a real project checkout is confirmed",
+      "**Org-specific CLIs**: None configured (global CLAUDE.md references Odoo tooling — odoo-bin, XML-RPC — and workspace-specific paths like ~/dev/eagle, but these belong to a different, unrelated workspace, not this location)",
+      "routine under ~/dev/eagle/ prefix: not applicable here — this session's working directory (~/Users/weckerleben) is not that workspace"
+    ]
+  },
+  "voiceEnabled": true
+}

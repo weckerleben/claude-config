@@ -1,0 +1,22 @@
+# Allowlist: ignore everything, then opt in.
+/*
+!/.gitignore
+!/CLAUDE.md
+!/AGENTS.md
+!/settings.json
+!/keybindings.json
+!/rules/
+!/agents/
+!/commands/
+!/hooks/
+!/scripts/
+!/skills/
+!/mcp/
+!/mcp-configs/
+
+# Machine-specific or generated content inside allowed dirs
+/skills/synced/
+/skills/learned/
+**/.DS_Store
+**/__pycache__/
+**/node_modules/
