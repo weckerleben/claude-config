@@ -15,54 +15,85 @@ const { loadPricing, resolveRates, MILLION } = require('./lib/cost');
 const { aggregateSession } = require('./lib/transcript');
 const { evaluateAdvice, buildCompactCommand, buildAdvisorContext } = require('./lib/compact-advice');
 const { currentBranch } = require('./lib/git');
+const { resolveMargin } = require('./lib/config');
+const { evaluateCostNotice, buildCostNotice } = require('./lib/cost-notice');
 const { readStdinJson } = require('./lib/stdin');
 
-function readBucket(file) {
+function readState(file) {
   try {
-    const value = JSON.parse(fs.readFileSync(file, 'utf8')).bucket;
-    return Number.isInteger(value) ? value : -1;
+    const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return {
+      bucket: Number.isInteger(saved.bucket) ? saved.bucket : -1,
+      costBucket: Number.isInteger(saved.costBucket) ? saved.costBucket : 0
+    };
   } catch {
-    return -1;
+    return { bucket: -1, costBucket: 0 };
   }
 }
 
-function writeBucket(file, bucket) {
+function writeState(file, state) {
   try {
-    fs.writeFileSync(file, JSON.stringify({ bucket }));
+    fs.writeFileSync(file, JSON.stringify(state));
   } catch {
     /* advisory only */
   }
 }
 
-function resolveMargin(pricing, env) {
-  const override = Number(env.WECK_COST_MARGIN);
-  return Number.isFinite(override) && override > 0 ? override : pricing.margin;
+function compactAdvice({ session, verdict, input, pricing, margin }) {
+  const { tokens, model } = session.context;
+  const { rates } = resolveRates(model, pricing);
+  const command = buildCompactCommand({
+    cwd: input.cwd,
+    branch: currentBranch(input.cwd),
+    modifiedFiles: session.modifiedFiles
+  });
+  return buildAdvisorContext({
+    tokens,
+    urgent: verdict.urgent,
+    perTurnUSD: (tokens * rates.cacheRead * margin) / MILLION,
+    command
+  });
 }
 
 function advise(input, env) {
   if (!input.transcript_path) return null;
 
   const pricing = loadPricing();
+  const margin = resolveMargin(pricing, env);
   const stateDir = env.WECK_STATE_DIR || os.tmpdir();
   const sessionId = input.session_id || path.basename(input.transcript_path, '.jsonl');
-  const bucketFile = path.join(stateDir, `weck-compact-${sessionId}.json`);
+  const stateFile = path.join(stateDir, `weck-compact-${sessionId}.json`);
+  const saved = readState(stateFile);
 
   const session = aggregateSession({ transcriptPath: input.transcript_path, stateDir, pricing });
-  if (!session.context) return null;
+  const messages = [];
 
-  const { tokens, model } = session.context;
-  const verdict = evaluateAdvice({ tokens, lastBucket: readBucket(bucketFile), cfg: pricing.compact });
-  writeBucket(bucketFile, verdict.nextBucket);
-  if (!verdict.advise) return null;
-
-  const { rates } = resolveRates(model, pricing);
-  const perTurnUSD = (tokens * rates.cacheRead * resolveMargin(pricing, env)) / MILLION;
-  const command = buildCompactCommand({
-    cwd: input.cwd,
-    branch: currentBranch(input.cwd),
-    modifiedFiles: session.modifiedFiles
+  const spend = evaluateCostNotice({
+    usd: session.total.usd * margin,
+    lastBucket: saved.costBucket,
+    everyUSD: pricing.costNotice && pricing.costNotice.everyUSD
   });
-  return buildAdvisorContext({ tokens, urgent: verdict.urgent, perTurnUSD, command });
+  if (spend.notify) {
+    messages.push(
+      buildCostNotice({
+        shownUSD: session.total.usd * margin,
+        marginPct: Math.round((margin - 1) * 100),
+        totals: session.total,
+        agentsUSD: session.agents.usd * margin,
+        agentCount: session.agentCount
+      })
+    );
+  }
+
+  let bucket = saved.bucket;
+  if (session.context) {
+    const verdict = evaluateAdvice({ tokens: session.context.tokens, lastBucket: saved.bucket, cfg: pricing.compact });
+    bucket = verdict.nextBucket;
+    if (verdict.advise) messages.push(compactAdvice({ session, verdict, input, pricing, margin }));
+  }
+
+  writeState(stateFile, { bucket, costBucket: spend.nextBucket });
+  return messages.length > 0 ? messages.join('\n\n') : null;
 }
 
 async function main() {

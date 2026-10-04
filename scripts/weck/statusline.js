@@ -16,22 +16,9 @@ const { loadPricing, resolveRates, MILLION } = require('./lib/cost');
 const { aggregateSession } = require('./lib/transcript');
 const { evaluateAdvice } = require('./lib/compact-advice');
 const { currentBranch } = require('./lib/git');
+const { resolveMargin, contextWindowSize } = require('./lib/config');
 const { readStdinJson } = require('./lib/stdin');
 const f = require('./lib/format');
-
-const STANDARD_WINDOW = 200_000;
-const LARGE_WINDOW = 1_000_000;
-
-function resolveMargin(pricing, env) {
-  const override = Number(env.WECK_COST_MARGIN);
-  return Number.isFinite(override) && override > 0 ? override : pricing.margin;
-}
-
-function contextWindow(input, tokens) {
-  const reported = input.context_window && input.context_window.context_window_size;
-  if (Number.isFinite(reported) && reported > 0) return reported;
-  return tokens > STANDARD_WINDOW ? LARGE_WINDOW : STANDARD_WINDOW;
-}
 
 function shortDir(dir) {
   const home = os.homedir();
@@ -48,7 +35,7 @@ function buildLines(input, env) {
     ? aggregateSession({ transcriptPath: input.transcript_path, stateDir: env.WECK_STATE_DIR || os.tmpdir(), pricing })
     : null;
   const tokens = session && session.context ? session.context.tokens : 0;
-  const window = contextWindow(input, tokens);
+  const window = contextWindowSize(input.context_window && input.context_window.context_window_size, tokens);
   const reportedPct = input.context_window && input.context_window.used_percentage;
   const pct = Number.isFinite(reportedPct) ? reportedPct : (tokens / window) * 100;
 

@@ -95,3 +95,37 @@ test('advisor never fails the hook on bad input', () => {
   const out = spawnSync('node', [ADVISOR], { input: 'not json', encoding: 'utf8' });
   assert.equal(out.status, 0);
 });
+
+function expensiveFixture({ cacheRead = 1000, output = 1_000_000 } = {}) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'weck-entry-'));
+  const transcript = path.join(dir, 'cost-session.jsonl');
+  const record = JSON.stringify({
+    type: 'assistant',
+    message: {
+      id: 'big',
+      model: 'claude-sonnet-5-5',
+      usage: { input_tokens: 5, output_tokens: output, cache_read_input_tokens: cacheRead, cache_creation_input_tokens: 0 },
+      content: []
+    }
+  });
+  fs.writeFileSync(transcript, `${record}\n`);
+  return { dir, transcript };
+}
+
+test('advisor emits a cost notice when spend crosses a step, even with a small context', () => {
+  const { dir, transcript } = expensiveFixture(); // ~$10 raw -> ~$12 with margin
+  const input = { session_id: 'cost-session', transcript_path: transcript, cwd: '/repo' };
+  const first = run(ADVISOR, input, { stateDir: dir });
+  const context = JSON.parse(first.stdout).hookSpecificOutput.additionalContext;
+  assert.ok(context.includes('[Cost notice]'));
+  assert.ok(context.includes('~$12.00'));
+  assert.ok(!context.includes('[Compact advisor]'));
+  assert.equal(run(ADVISOR, input, { stateDir: dir }).stdout.trim(), '');
+});
+
+test('advisor joins cost notice and compact advice in one payload', () => {
+  const { dir, transcript } = expensiveFixture({ cacheRead: 200000 });
+  const input = { session_id: 'cost-session', transcript_path: transcript, cwd: '/repo' };
+  const context = JSON.parse(run(ADVISOR, input, { stateDir: dir }).stdout).hookSpecificOutput.additionalContext;
+  assert.ok(context.includes('[Cost notice]') && context.includes('[Compact advisor]'));
+});

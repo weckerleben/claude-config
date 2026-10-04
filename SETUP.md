@@ -59,3 +59,15 @@ Code lives in `scripts/weck/` and is wired in `settings.json` (`statusLine` and 
 - **Updating rates**: edit `pricing.json` from https://platform.claude.com/docs/en/about-claude/pricing
   and bump `fetchedAt`. Cached totals are rebuilt automatically when the table changes.
 - **Tests**: `node --test scripts/weck/tests/*.test.js`
+
+### Seeing the cost outside the terminal (desktop app)
+
+The statusline only renders in the terminal UI, so two other paths exist:
+
+- **Cost notice**: the same `UserPromptSubmit` hook announces the session spend every
+  `costNotice.everyUSD` (default $5, shown amount, margin included). The model relays
+  it as one line. Set `everyUSD` to 0 in `pricing.json` to turn it off.
+- **`/costo`**: on-demand report for the latest session of the current project.
+  `/costo --all --limit 10` lists recent sessions, `--session <id>` picks one and
+  `--json` prints machine-readable output. The same script runs from any shell:
+  `node ~/.claude/scripts/weck/cost-report.js`.
