@@ -10,6 +10,8 @@
 !/commands/
 !/hooks/
 !/scripts/
+!/bootstrap.sh
+!/SETUP.md
 !/skills/
 !/mcp/
 !/mcp-configs/
