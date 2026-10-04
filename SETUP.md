@@ -41,3 +41,21 @@ Bump `ECC_REF` in `bootstrap.sh`, commit, and re-run the bootstrap on each machi
 
 `env.ECC_DISABLED_HOOKS` in `settings.json` turns off the tmux reminders, the
 git push reminder and the gateguard fact-force hook.
+
+## Statusline, session cost and compact advisor
+
+Code lives in `scripts/weck/` and is wired in `settings.json` (`statusLine` and a
+`UserPromptSubmit` hook). ECC's own `pre:edit-write:suggest-compact` and
+`stop:cost-tracker` hooks are disabled through `ECC_DISABLED_HOOKS` because these replace them.
+
+- **Cost**: computed from the session transcripts (main + subagents), counting each
+  API message once, with cache reads and 5m/1h cache writes priced separately.
+  Rates live in `scripts/weck/pricing.json` (source and fetch date inside). The shown
+  amount is multiplied by `margin` (default 1.2). Override per shell with `WECK_COST_MARGIN`.
+- **Unknown model**: priced at the most expensive tier and marked with `?`.
+- **Compact advisor**: advises at 150k tokens, again every +100k, urgent at 300k
+  (`compact` block in `pricing.json`). It hands the model a ready-to-paste
+  `/compact <instructions>` command.
+- **Updating rates**: edit `pricing.json` from https://platform.claude.com/docs/en/about-claude/pricing
+  and bump `fetchedAt`. Cached totals are rebuilt automatically when the table changes.
+- **Tests**: `node --test scripts/weck/tests/*.test.js`

@@ -2,9 +2,8 @@
   "skillListingBudgetFraction": 0.03,
   "env": {
     "ECC_HOOK_PROFILE": "standard",
-    "ECC_DISABLED_HOOKS": "pre:edit-write:gateguard-fact-force,pre:bash:auto-tmux-dev,pre:bash:tmux-reminder,pre:bash:git-push-reminder",
-    "ECC_SESSION_START_MAX_CHARS": "2000",
-    "COMPACT_THRESHOLD": "30"
+    "ECC_DISABLED_HOOKS": "pre:edit-write:gateguard-fact-force,pre:bash:auto-tmux-dev,pre:bash:tmux-reminder,pre:bash:git-push-reminder,pre:edit-write:suggest-compact,stop:cost-tracker",
+    "ECC_SESSION_START_MAX_CHARS": "2000"
   },
   "permissions": {
     "allow": [
@@ -127,6 +126,16 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/scripts/weck/compact-advisor.js\""
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {
@@ -200,5 +209,9 @@
       }
     }
   },
-  "includeCoAuthoredBy": false
+  "includeCoAuthoredBy": false,
+  "statusLine": {
+    "type": "command",
+    "command": "node \"$HOME/.claude/scripts/weck/statusline.js\""
+  }
 }
