@@ -2,7 +2,7 @@
   "skillListingBudgetFraction": 0.03,
   "env": {
     "ECC_HOOK_PROFILE": "standard",
-    "ECC_DISABLED_HOOKS": "pre:edit-write:gateguard-fact-force",
+    "ECC_DISABLED_HOOKS": "pre:edit-write:gateguard-fact-force,pre:bash:auto-tmux-dev,pre:bash:tmux-reminder,pre:bash:git-push-reminder",
     "ECC_SESSION_START_MAX_CHARS": "2000",
     "COMPACT_THRESHOLD": "30"
   },
@@ -105,7 +105,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /Users/weckerleben/.claude/scripts/hooks/weck-guard.js"
+            "command": "node \"$HOME/.claude/scripts/hooks/weck-guard.js\""
           }
         ]
       },
@@ -114,7 +114,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /Users/weckerleben/.claude/scripts/hooks/frontend-design-gate.js"
+            "command": "node \"$HOME/.claude/scripts/hooks/frontend-design-gate.js\""
           }
         ]
       },
@@ -123,7 +123,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node /Users/weckerleben/.claude/scripts/hooks/orchestration-gate.js"
+            "command": "node \"$HOME/.claude/scripts/hooks/orchestration-gate.js\""
           }
         ]
       }
@@ -131,19 +131,13 @@
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
-    "ecc@ecc": true,
     "cashea-engineering@cashea-skills": true,
     "cashea-marketplace@cashea-skills": true,
     "cashea-hub@cashea-skills": true,
-    "cashea-web@cashea-skills": true
+    "cashea-web@cashea-skills": true,
+    "ecc@ecc": true
   },
   "extraKnownMarketplaces": {
-    "ecc": {
-      "source": {
-        "source": "directory",
-        "path": "/Users/weckerleben/dev/ecc"
-      }
-    },
     "cashea-skills": {
       "source": {
         "source": "github",
@@ -197,5 +191,14 @@
       "routine under ~/dev/eagle/ prefix: not applicable here — this session's working directory (~/Users/weckerleben) is not that workspace"
     ]
   },
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "pluginConfigs": {
+    "ecc@ecc": {
+      "options": {
+        "hooks_enabled": true,
+        "hook_profile": "standard"
+      }
+    }
+  },
+  "includeCoAuthoredBy": false
 }
