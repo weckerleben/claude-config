@@ -66,11 +66,11 @@ if claude plugin list 2>/dev/null | grep -q 'ecc@ecc'; then
 else
   run claude plugin install ecc@ecc
 fi
-if [ "$DRY_RUN" = 0 ]; then
-  echo '{"hooks_enabled":"true","hook_profile":"standard"}' | claude plugin configure ecc@ecc --values-stdin
-else
-  echo '[dry-run] claude plugin configure ecc@ecc (hooks_enabled=true, hook_profile=standard)'
-fi
+# Plugin options (hooks_enabled, hook_profile) live in settings.json under
+# pluginConfigs; the CLI has no `plugin configure` command.
+grep -q '"ecc@ecc"' "$CLAUDE_DIR/settings.json" 2>/dev/null \
+  && grep -q '"pluginConfigs"' "$CLAUDE_DIR/settings.json" \
+  || warn "settings.json has no pluginConfigs for ecc@ecc; ECC hooks use plugin defaults"
 
 step "Installing ECC rules (plugins do not ship rules)"
 run "$ECC_DIR/install.sh" --target claude --modules rules-core --no-hooks
