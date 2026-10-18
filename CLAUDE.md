@@ -20,6 +20,41 @@
 ## Lo que NO hacer
 - No instalar dependencias globales sin preguntar
 - No cambiar infraestructura sin confirmación explícita
+- No asumir el estado de un PR (abierto, mergeado, cerrado, bloqueado, base, checks).
+  Cada vez que mencione un PR, aunque lo haya visto antes en la sesión, verificar el
+  estado actual (`gh pr view <n> --json state,mergedAt,baseRefName,mergeStateStatus`
+  o `get_status`) ANTES de decir algo sobre él o de planificar en base a él. Pasa que
+  los PRs se fusionan a `main` mientras trabajo; lo que "sabía" puede estar viejo.
+  Lo mismo vale para las dependencias entre PRs de un stack.
+
+## Tareas web — SIEMPRE con Claude in Chrome (INNEGOCIABLE)
+
+Si una tarea requiere una interfaz web (ver una página, un panel, un dashboard,
+Odoo.sh, GitHub, Jira, una consola cloud, cualquier URL), **la hago yo con Claude in
+Chrome** (`mcp__claude-in-chrome__*`, el Chrome real de William con sus sesiones).
+Es el browser por defecto para esto, por encima del browser integrado de la app.
+
+- **Prohibido** responder "velo desde la interfaz", "tenés que entrar a la web",
+  "no puedo acceder a la web" o equivalentes. Si el dato o la acción está en una web,
+  lo busco/hago yo en Chrome. Pasarle la tarea a William es el último recurso, no el
+  default.
+- Las tools de Chrome son diferidas: cargarlas de una con `ToolSearch` (un solo
+  `select:` con todas las que voy a necesitar: `tabs_context_mcp`, `navigate`,
+  `computer`, `read_page`, `get_page_text`, `find`, `form_input`, y las que pida la
+  tarea) antes de usarlas.
+- **Si hace falta login, 2FA, CAPTCHA o cualquier acción mía: NO frenar con un
+  "no pude porque se necesita iniciar sesión".** Dejo la pestaña abierta en la pantalla
+  que corresponde, aviso por el chat qué hace falta y abro un `AskUserQuestion`
+  (encuesta) preguntando si ya inicié sesión / resolví lo pendiente, con opciones
+  tipo "Listo, ya podés seguir" / "No pude, necesito ayuda". Cuando contesto, retomo
+  desde donde quedé, sin re-explicar. Si contesto que no pude, recién ahí reporto el
+  bloqueo.
+- Lo que sigue prohibido aunque use Chrome: nunca escribo contraseñas, tokens ni datos
+  de pago, ni resuelvo CAPTCHAs; eso lo hago yo (William) cuando me avisa. Las acciones
+  irreversibles u hacia afuera (enviar, publicar, borrar, comprar) siguen pidiendo
+  confirmación en el chat.
+- Solo si Claude in Chrome no está disponible (tools ausentes o sin conexión a la
+  extensión) aviso eso con claridad y pregunto antes de usar otro browser.
 
 ## UI/UX Gate — frontend al 110% (INNEGOCIABLE)
 
@@ -280,6 +315,24 @@ nombre de branch de trabajo.
   si hay cambios de UI), **Notes**.
 - Nunca dejar branding de Claude en el body, ni siquiera si viene de un
   template externo.
+
+## Post-PR Gate — repos Odoo (check `ci/odoo.sh`)
+
+Si el repo es modo Odoo (mismo marcador de la política dual de commits), cada PR
+dispara el check externo `ci/odoo.sh (dev) — Odoo Test Suite`, que Odoo.sh reporta
+como commit status. Rojo = tests rotos. Amarillo = WARNING en el log de carga (ej.
+`_name` faltante, etiquetas de campo duplicadas). **Abrir el PR no termina el
+trabajo.**
+
+- Al crear el PR, avisar en el mismo mensaje que `ci/odoo.sh (dev)` está en curso
+  y quedarse pendiente de él con las herramientas de PR de la app (`bind_pr` /
+  `get_status`). Sin polling manual (`gh`, `/loop`, cron).
+- **Siempre** prender `auto_fix` (`set_monitor`, con `address_comments` igual) en
+  cada PR que abra en un repo Odoo, sin preguntar: William lo pidió como regla fija.
+- Si falla o queda amarillo: leer el log del build, separar falla propia de falla
+  preexistente en `main` (worktree limpio de `origin/main`), arreglar la causa
+  raíz (sin `# noqa`), bump de versión si corresponde, pushear y volver a esperar.
+- Cero warnings: un amarillo cuenta como falla.
 
 ## Pre-push Gate
 

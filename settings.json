@@ -5,6 +5,7 @@
     "ECC_DISABLED_HOOKS": "pre:edit-write:gateguard-fact-force,pre:bash:auto-tmux-dev,pre:bash:tmux-reminder,pre:bash:git-push-reminder,pre:edit-write:suggest-compact,stop:cost-tracker",
     "ECC_SESSION_START_MAX_CHARS": "2000"
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(git status:*)",
@@ -138,13 +139,18 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "node \"$HOME/.claude/scripts/weck/statusline.js\""
+  },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "cashea-engineering@cashea-skills": true,
     "cashea-marketplace@cashea-skills": true,
     "cashea-hub@cashea-skills": true,
     "cashea-web@cashea-skills": true,
-    "ecc@ecc": true
+    "ecc@ecc": true,
+    "cashea-goku@cashea-skills": true
   },
   "extraKnownMarketplaces": {
     "cashea-skills": {
@@ -161,6 +167,14 @@
     },
     "claude-opus-4-8": {
       "effortLevel": "xhigh"
+    }
+  },
+  "pluginConfigs": {
+    "ecc@ecc": {
+      "options": {
+        "hooks_enabled": true,
+        "hook_profile": "standard"
+      }
     }
   },
   "tui": "fullscreen",
@@ -200,18 +214,5 @@
       "routine under ~/dev/eagle/ prefix: not applicable here — this session's working directory (~/Users/weckerleben) is not that workspace"
     ]
   },
-  "voiceEnabled": true,
-  "pluginConfigs": {
-    "ecc@ecc": {
-      "options": {
-        "hooks_enabled": true,
-        "hook_profile": "standard"
-      }
-    }
-  },
-  "includeCoAuthoredBy": false,
-  "statusLine": {
-    "type": "command",
-    "command": "node \"$HOME/.claude/scripts/weck/statusline.js\""
-  }
+  "voiceEnabled": true
 }
