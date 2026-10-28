@@ -91,13 +91,13 @@
       "Bash(du:*)",
       "Bash(pwd)",
       "Bash(date)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(ssh -o BatchMode=yes -o HostName=192.168.100.30 -o IdentityFile=~/.ssh/cashea -o IdentitiesOnly=yes 192.168.100.30:*)"
     ],
     "deny": [
       "Read(**/*.keystore)"
     ]
   },
-  "model": "claude-sonnet-5-5",
   "hooks": {
     "PreToolUse": [
       {
