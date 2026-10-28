@@ -17,6 +17,36 @@
 - Usar /compact con resumen explícito de qué preservar
 - TDD obligatorio: tests antes de implementar
 
+## Worktrees — siempre en `~/dev/cashea/worktree/<repo>/<worktree>` (INNEGOCIABLE)
+
+Todo worktree que yo cree (`git worktree add`, subagentes con `isolation: "worktree"`,
+checkouts de prueba de una rama) va en `~/dev/cashea/worktree/<repo>/<worktree>`:
+`<repo>` es el nombre del repo (ej. `cashea-odoo-v19`) y `<worktree>` un nombre corto
+de la rama o tarea (ej. `ep-535-inc`).
+
+- Nunca como carpeta hermana del repo en `~/dev/cashea/`, ni dentro del repo
+  (`.claude/worktrees/`), ni en el scratchpad o `/tmp`.
+- Se crea a mano con `git worktree add ~/dev/cashea/worktree/<repo>/<worktree> <rama>`
+  (git crea las carpetas que falten). Si una herramienta lo crearía en otro lado
+  (ej. `EnterWorktree`), uso el comando de git en su lugar.
+- Al terminar: `git worktree remove` y confirmar con `git worktree list` que no queda
+  ninguno mío. La rama sobrevive; solo se va la carpeta.
+- Lo que no es un worktree (clones descartables, venvs, scripts, salidas) sigue yendo
+  al scratchpad de la sesión, nunca a `~/dev/cashea/`.
+
+## Tickets Jira — In Progress al empezar (INNEGOCIABLE)
+
+Si William pide trabajar un ticket ("implementalo", "arreglá EP-123", "hacé esto"),
+el ticket pasa a **In Progress** en el momento en que empiezo, antes de escribir código
+o crear la rama. No se deja en To Do mientras se trabaja, ni se pide permiso para
+moverlo: la instrucción de trabajarlo ya lo autoriza.
+
+- Orden: leer el ticket → transicionar a In Progress (`getTransitionsForJiraIssue` +
+  `transitionJiraIssue`) → recién ahí rama e implementación.
+- Si ya está en In Progress o más adelante (CODE REVIEW, QA INTERNO, ...), no lo retrocedo.
+- Los demás estados siguen su propio gate (p. ej. `A PRODUCCION` antes del PR a `main`
+  en repos Odoo); eso no cambia.
+
 ## Lo que NO hacer
 - No instalar dependencias globales sin preguntar
 - No cambiar infraestructura sin confirmación explícita
@@ -133,6 +163,11 @@ Es el browser por defecto para esto, por encima del browser integrado de la app.
   de pago, ni resuelvo CAPTCHAs; eso lo hago yo (William) cuando me avisa. Las acciones
   irreversibles u hacia afuera (enviar, publicar, borrar, comprar) siguen pidiendo
   confirmación en el chat.
+- **Si una API o un MCP (Jira, GitHub, Slack, Odoo.sh, etc.) devuelve "not found", "sin
+  permiso", timeout o no deja leer algo, el fallback es Chrome, sin preguntar y sin
+  reportarlo como bloqueo.** La sesión de Chrome de William tiene accesos que el token de
+  la API no tiene (ej.: el proyecto ODOO de Jira no se lee por API pero sí por la web).
+  Se entra por Chrome y listo; esto vale también para los subagentes que delegue.
 - Solo si Claude in Chrome no está disponible (tools ausentes o sin conexión a la
   extensión) aviso eso con claridad y pregunto antes de usar otro browser.
 
@@ -191,6 +226,10 @@ When running tests, builds, linters, or any execution:
 - Nunca mezclar. Si un proyecto puntual necesita artefactos en español, eso se
   declara en el CLAUDE.md local de ese repo y sobreescribe esta regla — no se
   asume nunca por default.
+- **Excepción (pedido de William, 2026-10-27): todo lo que se publica en Slack o en Jira
+  va en español, siempre** — mensajes y comentarios del bot de CI (avisos de QA, resúmenes,
+  comentarios en tickets), comentarios que yo deje en Jira y tickets/épicas nuevos. El
+  código, los commits, los PRs y los docs del repo siguen en inglés.
 
 ## Identidad Git
 
@@ -368,8 +407,13 @@ fix(sale): prevent negative quantity   // formato Conventional en repo Odoo
 
 ## Branch Naming
 
-Formato: `<type>/<short-kebab-description>`, opcionalmente
-`<type>/<TICKET-ID>-<description>` si el repo usa issue tracker.
+Formato: `<type>/<short-kebab-description>`; si el repo usa issue tracker, el ticket
+es obligatorio y va primero: `<type>/<ticket-id>-<description>`.
+
+**Todo en minúsculas, también la key del ticket** (`bugfix/ep-383-advance-payment-journal`,
+nunca `EP-383`): el regex de abajo no acepta mayúsculas y el bot de QA de
+cashea-odoo-v19 rechaza la rama. En macOS (`core.ignorecase=true`) una rama que difiere
+solo en mayúsculas no se puede renombrar ni coexistir: ponerle bien el nombre al crearla.
 
 Types: `feature` `bugfix` `hotfix` `release` `refactor` `docs` `test` `chore`
 `ci`
