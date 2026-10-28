@@ -1,0 +1,2 @@
+{"type": "assistant", "sessionId": "s2", "message": {"role": "assistant", "content": [{"type": "text", "text": "Commit: agregar tests"}]}}
+{"type": "user", "timestamp": "2026-10-22T10:00:00Z", "sessionId": "s2", "message": {"role": "user", "content": "Te dije que los commits van en inglés, no me hagas repetirlo"}}

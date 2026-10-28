@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: existing-rule-repeatedly-violated
+expected_outcome: |
+  The rule already exists in CLAUDE.md and was violated in three sessions. The response recognizes this and does NOT add a duplicate rule. It reports the rule as repeatedly violated and proposes a stronger mechanism (a hook or similar structural enforcement) instead of rewording it.
+context:
+  scaffold_script: place-files.sh

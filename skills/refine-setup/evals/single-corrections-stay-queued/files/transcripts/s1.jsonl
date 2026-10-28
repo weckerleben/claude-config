@@ -1,0 +1,2 @@
+{"type": "assistant", "sessionId": "s1", "message": {"role": "assistant", "content": [{"type": "text", "text": "Voy a usar el puerto 3000."}]}}
+{"type": "user", "timestamp": "2026-10-21T10:00:00Z", "sessionId": "s1", "message": {"role": "user", "content": "No, en este proyecto usá el puerto 8081"}}

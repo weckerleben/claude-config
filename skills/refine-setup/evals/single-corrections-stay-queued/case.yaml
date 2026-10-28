@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: single-corrections-stay-queued
+expected_outcome: |
+  Neither correction reaches a promotion condition: each appears in one session only and neither was explicitly approved as a rule. Both stay in a review queue. No rule is written to CLAUDE.md.
+context:
+  scaffold_script: place-files.sh

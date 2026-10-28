@@ -1,0 +1,4 @@
+{"type": "assistant", "sessionId": "s1", "message": {"role": "assistant", "content": [{"type": "text", "text": "Commit: feat: add login form"}]}}
+{"type": "user", "timestamp": "2026-10-20T10:00:00Z", "sessionId": "s1", "message": {"role": "user", "content": "No, los mensajes de commit siempre en inglés, no en español"}}
+{"type": "assistant", "sessionId": "s1", "message": {"role": "assistant", "content": [{"type": "text", "text": "Listo, lo reescribí."}]}}
+{"type": "user", "timestamp": "2026-10-20T10:00:00Z", "sessionId": "s1", "message": {"role": "user", "content": "no, ese archivo no, el otro"}}

@@ -1,0 +1,2 @@
+{"type": "assistant", "sessionId": "s2", "message": {"role": "assistant", "content": [{"type": "text", "text": "Creé un mock de la base."}]}}
+{"type": "user", "timestamp": "2026-10-24T10:00:00Z", "sessionId": "s2", "message": {"role": "user", "content": "Mal, acá nunca uses mocks de la DB"}}
