@@ -56,7 +56,7 @@ mismo turno, sin preguntar. No se deja trabajo suelto en el working tree.
 - Un commit por tema (no mezclar CLAUDE.md con settings.json), Conventional Commits en
   inglés, sin firma de Claude.
 - El remoto es de la cuenta personal: `gh auth switch -u weckerleben`, `git pull --rebase`
-  si hay divergencia, `git push`, y **volver siempre** a `weckerlebencasheapp` al terminar.
+  si hay divergencia, `git push`.
 - Si el rebase da conflicto, o el cambio expone datos sensibles (IPs, rutas de keys,
   tokens), paro y aviso antes de pushear.
 
