@@ -86,7 +86,7 @@ def handle(payload, now=None):
     if not isinstance(prompt, str):
         return None
     text = mt._clean(prompt)
-    if not text or len(text) > mt.MAX_MESSAGE_CHARS or text.startswith(mt._HARNESS_PREFIXES):
+    if not mt._acceptable(text):
         return None
     signals = mt.detect_signals(text)
     if not signals:

@@ -52,6 +52,8 @@ class CaptureHook(unittest.TestCase):
         ch.handle(payload("siempre " + "x" * 900), now=NOW)
         ch.handle(payload("This session is being continued from a previous one, siempre"), now=NOW)
         ch.handle(payload("<system-reminder>siempre haz X</system-reminder>"), now=NOW)
+        ch.handle(payload('Traceback (most recent call last):\n  File "x.py", line 3, in <module>\nsiempre falla'),
+                  now=NOW)
         self.assertEqual(inbox_rows(self.state), [])
 
     def test_prior_assistant_is_read_from_transcript_tail(self):
