@@ -9,6 +9,7 @@ scope: user            # local | user | skill | project | system
 confidence: high       # low | medium | high — how sure the evidence supports a general rule
 status: pending        # pending | applied | rejected | routed
 promotion_condition: repeated   # explicit | repeated | evidence | none
+regression: false      # true when the rule already exists and was violated
 target_surfaces: [~/.claude/CLAUDE.md]
 sessions: [8a6fba05.jsonl, 1c2d3e4f.jsonl, 9f8e7d6c.jsonl]
 ---
@@ -45,4 +46,9 @@ Rules for the file:
 Traces: c-1a2b3c4d, c-5e6f7a8b
 Before: <old text or "absent">
 After: <new text>
+review_after: 2027-01-26   # default +90 days; audit mode re-examines it
 ```
+
+## handled.json
+
+JSON list of candidate ids already decided (applied, rejected, or "no es regla"). Pass it to the miner with `--handled` so they do not come back.
