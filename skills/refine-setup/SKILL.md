@@ -73,6 +73,7 @@ Wait for his answer per item. Apply only the approved ones. Mark the rest `[~] p
 
 - Append to `~/.claude/self-improvement/applied-changes.md`: date, surface, before/after, trace ids. This is the provenance; the rule text itself stays clean.
 - Update `review-queue.md` for the unapproved.
+- Write the current UTC time (ISO 8601) to `~/.claude/self-improvement/reviewed-at.txt`; the hook counts only inbox entries newer than that.
 - `~/.claude` is a git repo: commit and push in the same turn, one commit per theme (CLAUDE.md separate from skills), Conventional Commits in English, no attribution lines. Stop and tell him if the rebase conflicts or the diff exposes IPs, key paths or tokens.
 
 ### 6. Report
@@ -92,6 +93,6 @@ Formats: `references/trace-format.md`.
 
 - Only reads Claude Code transcripts (`~/.claude/projects/**/*.jsonl`); the Claude mobile/web app leaves nothing local to mine.
 - Spanish and English signal phrases only. If a rule he states is missed, add a phrase to `_SIGNALS` in `scripts/mine_transcripts.py` and a test in `tests/` first.
-- Automatic capture on every correction (a hook) is not installed. It would need a `settings.json` change; propose it, do not add it unasked.
+- A `UserPromptSubmit` hook (`scripts/capture_hook.py`, registered in `settings.json`) logs his correction/rule messages to `~/.claude/self-improvement/inbox.jsonl` and, once the unreviewed count reaches 10, nudges once a day with fixed text. It never echoes his text into context. The transcripts remain the source of truth; the inbox only adds immediacy.
 
 Run the miner's tests with `python3 -m unittest discover -s ~/.claude/skills/refine-setup/tests`.
