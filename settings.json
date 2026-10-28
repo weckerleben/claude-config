@@ -136,6 +136,14 @@
             "command": "node \"$HOME/.claude/scripts/weck/compact-advisor.js\""
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/skills/refine-setup/scripts/capture_hook.py\""
+          }
+        ]
       }
     ]
   },
