@@ -47,6 +47,19 @@ moverlo: la instrucción de trabajarlo ya lo autoriza.
 - Los demás estados siguen su propio gate (p. ej. `A PRODUCCION` antes del PR a `main`
   en repos Odoo); eso no cambia.
 
+## Cambios en `~/.claude` — commit y push siempre (INNEGOCIABLE)
+
+`~/.claude` es un repo (`weckerleben/claude-config`). Todo cambio que yo haga ahí
+(CLAUDE.md, settings.json, hooks, rules, agentes, skills) se commitea y se pushea en el
+mismo turno, sin preguntar. No se deja trabajo suelto en el working tree.
+
+- Un commit por tema (no mezclar CLAUDE.md con settings.json), Conventional Commits en
+  inglés, sin firma de Claude.
+- El remoto es de la cuenta personal: `gh auth switch -u weckerleben`, `git pull --rebase`
+  si hay divergencia, `git push`, y **volver siempre** a `weckerlebencasheapp` al terminar.
+- Si el rebase da conflicto, o el cambio expone datos sensibles (IPs, rutas de keys,
+  tokens), paro y aviso antes de pushear.
+
 ## Lo que NO hacer
 - No instalar dependencias globales sin preguntar
 - No cambiar infraestructura sin confirmación explícita
