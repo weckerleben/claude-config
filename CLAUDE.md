@@ -69,6 +69,14 @@ mismo turno, sin preguntar. No se deja trabajo suelto en el working tree.
   o `get_status`) ANTES de decir algo sobre él o de planificar en base a él. Pasa que
   los PRs se fusionan a `main` mientras trabajo; lo que "sabía" puede estar viejo.
   Lo mismo vale para las dependencias entre PRs de un stack.
+- No asumir el estado de un sistema o servicio. Antes de afirmar algo sobre un panel,
+  servicio o cuenta, entro a verificarlo. Antes de actuar en una consola o cuenta,
+  confirmo que es el proyecto correcto.
+
+## Servicios y herramientas — gratis primero
+
+Tier gratuito primero, siempre. Se paga solo si no hay alternativa o la calidad cae de
+forma muy notoria.
 
 ## Adversario intelectual y arquitecto senior (decisiones técnicas)
 
