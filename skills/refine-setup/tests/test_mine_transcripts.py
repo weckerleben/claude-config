@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 import sys
 import tempfile
@@ -272,6 +274,90 @@ class ProjectsAndHandled(unittest.TestCase):
             write_session(tmp, [user("nunca uses mocks")])
             [c] = mt.mine(Path(tmp))
             self.assertEqual(mt.mine(Path(tmp), handled={c["id"]}), [])
+
+
+class CliLimit(unittest.TestCase):
+    def _run(self, argv):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            mt.main(argv)
+        return [json.loads(line) for line in buf.getvalue().splitlines()]
+
+    def test_no_limit_by_default_returns_every_candidate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            write_session(tmp, [user(f"nunca hagas la cosa número {i}") for i in range(150)])
+            self.assertEqual(len(self._run(["--root", tmp])), 150)
+
+    def test_explicit_limit_still_caps_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            write_session(tmp, [user(f"nunca hagas la cosa número {i}") for i in range(10)])
+            self.assertEqual(len(self._run(["--root", tmp, "--limit", "3"])), 3)
+
+
+class CliBatches(unittest.TestCase):
+    def _ids(self, argv):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            mt.main(argv)
+        return [json.loads(line)["id"] for line in buf.getvalue().splitlines()]
+
+    def test_offset_and_limit_page_through_the_same_ordering_without_overlap(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            write_session(tmp, [user(f"nunca hagas la cosa número {i}") for i in range(10)])
+            everything = self._ids(["--root", tmp])
+            pages = [self._ids(["--root", tmp, "--offset", str(o), "--limit", "4"]) for o in (0, 4, 8)]
+            self.assertEqual([i for p in pages for i in p], everything)
+            self.assertEqual([len(p) for p in pages], [4, 4, 2])
+
+    def test_offset_past_the_end_is_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            write_session(tmp, [user("nunca uses mocks")])
+            self.assertEqual(self._ids(["--root", tmp, "--offset", "5"]), [])
+
+
+HUMAN = {"kind": "human"}
+
+
+class LongMessageExcerpts(unittest.TestCase):
+    def _long(self, rule_sentence, **extra):
+        filler = "Contexto de la tarea que describo con muchos detalles. " * 20
+        return user(filler + rule_sentence + " " + filler, **extra)
+
+    def test_long_human_message_keeps_only_the_signal_sentences(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = write_session(tmp, [self._long("Siempre commiteá en inglés.", origin=HUMAN)])
+            [m] = list(mt.extract_human_messages(p))
+            self.assertTrue(m["excerpt"])
+            self.assertEqual(m["text"], "Siempre commiteá en inglés.")
+
+    def test_long_message_without_explicit_human_origin_is_dropped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = write_session(tmp, [self._long("Siempre commiteá en inglés.")])
+            self.assertEqual(list(mt.extract_human_messages(p)), [])
+
+    def test_long_human_message_without_signals_is_dropped(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = write_session(tmp, [self._long("Seguí con el siguiente paso.", origin=HUMAN)])
+            self.assertEqual(list(mt.extract_human_messages(p)), [])
+
+    def test_long_pasted_log_is_still_dropped(self):
+        log = 'Traceback (most recent call last):\n  File "x.py", line 3, in <module>\n' + "x" * 900 + " siempre falla."
+        with tempfile.TemporaryDirectory() as tmp:
+            p = write_session(tmp, [user(log, origin=HUMAN)])
+            self.assertEqual(list(mt.extract_human_messages(p)), [])
+
+    def test_short_messages_are_not_marked_as_excerpts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = write_session(tmp, [user("nunca uses mocks", origin=HUMAN)])
+            [m] = list(mt.extract_human_messages(p))
+            self.assertFalse(m["excerpt"])
+
+    def test_mine_surfaces_the_excerpt_as_a_candidate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            write_session(tmp, [self._long("Siempre commiteá en inglés.", origin=HUMAN)])
+            [c] = mt.mine(Path(tmp))
+            self.assertEqual(c["text"], "Siempre commiteá en inglés.")
+            self.assertTrue(c["excerpt"])
 
 
 if __name__ == "__main__":

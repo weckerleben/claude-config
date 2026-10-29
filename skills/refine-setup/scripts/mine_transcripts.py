@@ -25,6 +25,8 @@ PRIOR_ASSISTANT_MAX = 400
 # Corrections are short. Longer messages are almost always pasted material or briefs.
 MAX_MESSAGE_CHARS = 800
 MIN_INTERRUPT_REDIRECT_CHARS = 8
+EXCERPT_SENTENCE_MAX = 300
+_SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
 
 _STRIP_BLOCKS = [
     re.compile(r"<system-reminder>.*?</system-reminder>", re.S),
@@ -127,10 +129,24 @@ def _rejection_text(record):
     return ""
 
 
+def _is_noise(text):
+    return bool(_INTERRUPT.match(text) or text.startswith(_HARNESS_PREFIXES) or looks_like_pasted_log(text))
+
+
 def _acceptable(text):
-    if not text or _INTERRUPT.match(text) or len(text) > MAX_MESSAGE_CHARS:
-        return False
-    return not (text.startswith(_HARNESS_PREFIXES) or looks_like_pasted_log(text))
+    return bool(text) and len(text) <= MAX_MESSAGE_CHARS and not _is_noise(text)
+
+
+def _explicitly_human(record):
+    origin = record.get("origin")
+    return isinstance(origin, dict) and origin.get("kind") == "human"
+
+
+def _signal_excerpt(text):
+    """Keep only the sentences of a long message that carry a signal, capped in size."""
+    picked = [s.strip()[:EXCERPT_SENTENCE_MAX] for s in _SENTENCE_SPLIT.split(text)
+              if s.strip() and detect_signals(s)]
+    return " … ".join(picked)[:MAX_MESSAGE_CHARS]
 
 
 def extract_human_messages(path):
@@ -161,8 +177,17 @@ def extract_human_messages(path):
             else:
                 continue
             flagged, after_interrupt = after_interrupt, False
-            if not _acceptable(text):
+            if not text or _is_noise(text):
                 continue
+            excerpt = False
+            if len(text) > MAX_MESSAGE_CHARS:
+                # Long text is only trusted as his when the harness marks it human, and then only
+                # the sentences that carry a signal are kept (the rest is usually a brief or paste).
+                if origin != "typed" or not _explicitly_human(rec):
+                    continue
+                text, excerpt = _signal_excerpt(text), True
+                if not text:
+                    continue
             yield {
                 "text": text,
                 "timestamp": rec.get("timestamp", ""),
@@ -170,6 +195,7 @@ def extract_human_messages(path):
                 "project": path.parent.name,
                 "origin": origin,
                 "after_interrupt": flagged,
+                "excerpt": excerpt,
                 "prior_assistant": prior[:PRIOR_ASSISTANT_MAX],
             }
 
@@ -221,7 +247,7 @@ def mine(root, since=None, handled=None):
                     "id": _candidate_id(key), "text": msg["text"], "signals": signals,
                     "prior_assistant": msg["prior_assistant"], "session": msg["session"],
                     "timestamp": msg["timestamp"], "occurrences": 1, "sessions": [msg["session"]],
-                    "projects": [msg["project"]], "origin": msg["origin"],
+                    "projects": [msg["project"]], "origin": msg["origin"], "excerpt": msg["excerpt"],
                 }
                 continue
             group["occurrences"] += 1
@@ -245,10 +271,13 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", default=str(DEFAULT_ROOT), help="transcripts root (default ~/.claude/projects)")
     ap.add_argument("--since", help="YYYY-MM-DD lower bound")
-    ap.add_argument("--limit", type=int, default=100)
+    ap.add_argument("--limit", type=int, default=None, help="cap the output; omit for every candidate")
+    ap.add_argument("--offset", type=int, default=0, help="skip this many candidates (page through in batches with --limit)")
     ap.add_argument("--handled", help="JSON file with a list of candidate ids already decided; they are skipped")
     args = ap.parse_args(argv)
-    for cand in mine(args.root, args.since, _load_handled(args.handled))[: args.limit]:
+    cands = mine(args.root, args.since, _load_handled(args.handled))
+    end = None if args.limit is None else args.offset + args.limit
+    for cand in cands[args.offset:end]:
         sys.stdout.write(json.dumps(cand, ensure_ascii=False) + "\n")
 
 
