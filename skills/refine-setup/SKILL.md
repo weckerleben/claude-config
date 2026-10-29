@@ -25,7 +25,7 @@ Method adapted from several public self-improvement tools (credits at the bottom
 | "revisá mis correcciones", "aprendé de cómo trabajo" | **Capture** (default, below) | — |
 | "auditá mi CLAUDE.md", "limpiá mis instrucciones" | **Audit** | `references/audit-claudemd.md` |
 | "proponeme skills", repeated manual workflow | **Discover** | `references/skill-discovery.md` |
-| "qué skills no uso" | **Prune report** | run `scripts/skill_usage.py` |
+| "qué skills no uso" | **Prune report** | run `scripts/skill_usage.py`; never-used after the grace period are candidates only. Propose a **reversible move** to `~/.claude/self-improvement/pruned/<date>/`, never a delete; skip plugin-namespaced skills (`ecc:…`), they are not local |
 | "debrief", "cerrar sesión", "cómo me fue" | **Retro** | `references/retro.md` |
 
 ## Capture workflow
