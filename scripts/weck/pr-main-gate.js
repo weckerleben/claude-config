@@ -4,10 +4,12 @@
 /**
  * PR-to-main gate (PreToolUse, Bash).
  *
- * In Odoo repos a PR to `main` is only opened once the Jira ticket is in
- * `A PRODUCCION`. A hook cannot read Jira, so it turns the rule into a
- * confirmation prompt (`ask`) every time `gh pr create` would target main,
- * which is also the default base when `--base` is omitted.
+ * In Odoo repos a PR to the production branch (`main` in v19, `master` in v16)
+ * is only opened once the Jira ticket is in `A PRODUCCION`. A hook cannot read
+ * Jira, so it denies `gh pr create` and tells Claude to check the ticket itself.
+ * Once checked, Claude re-runs the command prefixed with
+ * `CASHEA_TICKET_VERIFIED=<KEY>`, which is the only way through. The default
+ * base when `--base` is omitted is the production branch, so it is covered too.
  */
 
 const fs = require('node:fs');
@@ -16,18 +18,25 @@ const { execFileSync } = require('node:child_process');
 const ODOO_REMOTE_RE = /cashea-odoo/i;
 const PR_CREATE_RE = /\bgh\s+pr\s+create\b/;
 const BASE_RE = /(?:--base[=\s]+|-B\s*)(\S+)/;
+const PRODUCTION_BASES = new Set(['main', 'master']);
+const VERIFIED_RE = /\bCASHEA_TICKET_VERIFIED=[A-Za-z]+-\d+\b/;
 
-const REASON =
-  'PR a `main` en un repo Odoo: solo se abre con el ticket en `A PRODUCCION`. ' +
-  'Verificá el estado del ticket en Jira antes de aprobar. Si todavía no llegó ahí, ' +
-  'la rama se queda en branch, commit y push, sin PR.';
+const REASON = [
+  'PR a la rama de producción en un repo Odoo: solo se abre con el ticket en `A PRODUCCION`.',
+  'Antes de reintentar, leé el ticket con `getJiraIssue` (la clave está en la rama o en el título del PR)',
+  'y mirá su estado.',
+  'Si NO está en `A PRODUCCION`: no abras el PR; la rama se queda en commit y push, y avisale a William.',
+  'Si SÍ está: reintentá el mismo comando con el prefijo `CASHEA_TICKET_VERIFIED=<CLAVE>`,',
+  'por ejemplo `CASHEA_TICKET_VERIFIED=EP-123 gh pr create ...`. No pongas el prefijo sin haber leído el estado.',
+].join(' ');
 
 function evaluatePrMainGate(command, remoteUrl) {
   if (!PR_CREATE_RE.test(command || '')) return null;
   if (!ODOO_REMOTE_RE.test(remoteUrl || '')) return null;
   const base = (command.match(BASE_RE)?.[1] || 'main').replace(/^['"]|['"]$/g, '');
-  if (base !== 'main') return null;
-  return { decision: 'ask', reason: REASON };
+  if (!PRODUCTION_BASES.has(base)) return null;
+  if (VERIFIED_RE.test(command)) return null;
+  return { decision: 'deny', reason: REASON };
 }
 
 function originUrl(cwd) {

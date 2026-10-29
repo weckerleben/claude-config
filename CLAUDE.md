@@ -49,9 +49,11 @@ moverlo: la instrucción de trabajarlo ya lo autoriza.
 - Orden: leer el ticket → transicionar a In Progress (`getTransitionsForJiraIssue` +
   `transitionJiraIssue`) → recién ahí rama e implementación.
 - Si ya está en In Progress o más adelante (CODE REVIEW, QA INTERNO, ...), no lo retrocedo.
-- PR a `main` en repos Odoo: solo con el ticket en `A PRODUCCION`. Antes de ese estado
-  se llega hasta branch, commit y push, sin PR. El hook `pr-main-gate` pide confirmación
-  ante `gh pr create` hacia `main`; la regla vale igual si no dispara.
+- PR a la rama de producción (`main` en v19, `master` en v16) en repos Odoo: solo con el
+  ticket en `A PRODUCCION`. Antes de ese estado se llega hasta branch, commit y push, sin PR.
+  El hook `pr-main-gate` bloquea `gh pr create` hasta que yo lea el ticket con `getJiraIssue`;
+  si está en `A PRODUCCION` reintento con el prefijo `CASHEA_TICKET_VERIFIED=<CLAVE>`. La regla
+  vale igual si el hook no dispara.
 - Los demás estados siguen su propio gate; eso no cambia.
 - El hook `ticket-key-reminder` recuerda la transición cuando aparece una clave `EP-`/`ODOO-`.
 
