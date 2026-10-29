@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: v16-warnings-red-ci
+expected_outcome: |
+  Invokes odoo-local-verify; v16 paths (.odoo16, odoo-src/odoo-16.0); counts WARNING; compares against clean origin/main; mentions known 3mit license warnings as pre-existing candidates.

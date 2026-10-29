@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: clone-db-filestore
+expected_outcome: |
+  Invokes odoo-local-verify; warns the clone does not carry the filestore and copies it; does not modify odoo19_test.

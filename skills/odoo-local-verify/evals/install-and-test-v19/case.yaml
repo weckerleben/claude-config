@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: install-and-test-v19
+expected_outcome: |
+  Invokes odoo-local-verify; throwaway DB epNNN_test, install then -u with --test-tags, port 8213, reads log file, counts WARNING, cleans up.
