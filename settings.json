@@ -126,6 +126,15 @@
             "command": "node \"$HOME/.claude/scripts/hooks/orchestration-gate.js\""
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/scripts/weck/pr-main-gate.js\""
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -142,6 +151,14 @@
           {
             "type": "command",
             "command": "python3 \"$HOME/.claude/skills/refine-setup/scripts/capture_hook.py\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/scripts/weck/ticket-key-reminder.js\""
           }
         ]
       }
