@@ -33,13 +33,17 @@ Method adapted from several public self-improvement tools (credits at the bottom
 ### 1. Mine candidates
 
 ```bash
-python3 ~/.claude/skills/refine-setup/scripts/mine_transcripts.py --since YYYY-MM-DD --limit 60 \
+python3 ~/.claude/skills/refine-setup/scripts/mine_transcripts.py [--since YYYY-MM-DD] \
   --handled ~/.claude/self-improvement/handled.json >| "$SCRATCH/cands.jsonl"
 ```
 
-Use the session scratchpad for output (zsh `noclobber` is on, hence `>|`). Default `--since` = date of the last entry in `~/.claude/self-improvement/applied-changes.md`; if there is none (first run), omit `--since` and mine all time, and raise `--limit` to 200 so the cut does not hide older patterns. `handled.json` is a JSON list of candidate ids he already decided (applied, rejected, or "no es regla"); it keeps dismissed items from coming back. Skip the flag if the file does not exist.
+Use the session scratchpad for output (zsh `noclobber` is on, hence `>|`). Default `--since` = date of the last entry in `~/.claude/self-improvement/applied-changes.md`; if there is none (first run), omit `--since` and mine all time. There is no cap: the miner returns every candidate, ordered by repetition, and you read them in batches (below). `handled.json` is a JSON list of candidate ids he already decided (applied, rejected, or "no es regla"); it keeps dismissed items from coming back. Skip the flag if the file does not exist.
 
 Each line is a candidate: `id`, `text`, `signals`, `prior_assistant`, `occurrences`, `sessions`, `projects`, `origin`. Signals: `correction`, `rule`, `guardrail` ("no agregues X salvo que…"), `interrupt` (he typed this right after interrupting you, which usually means "not like that"), `rejection` (his words when rejecting a tool call). The regexes favour recall: expect approvals and one-off asks mixed in; judging them is your job in step 2.
+
+Long messages of his (over 800 chars, marked human by the harness) are not dropped: only their signal-bearing sentences come through, flagged `excerpt: true`. Long text without an explicit human mark is dropped, because it is often a machine-written brief or summary.
+
+**Batches.** Count the lines first (`wc -l`). Read the file, or page it with `--offset N --limit 25` (same ordering, no overlap), 25 candidates at a time. Triage every batch into traces before proposing anything, then group across batches and propose once: repeats worded differently often land in different batches, and counting sessions needs the whole picture. Drop candidates that are not about how Claude should work (personal finance, one-off errands) without writing a trace for them.
 
 Also check `~/.claude/self-improvement/inbox.jsonl` (written live by the capture hook); it holds the same kind of messages with the assistant text he reacted to.
 
