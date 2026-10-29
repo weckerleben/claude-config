@@ -37,7 +37,7 @@ python3 ~/.claude/skills/refine-setup/scripts/mine_transcripts.py --since YYYY-M
   --handled ~/.claude/self-improvement/handled.json >| "$SCRATCH/cands.jsonl"
 ```
 
-Use the session scratchpad for output (zsh `noclobber` is on, hence `>|`). Default `--since` = date of the last entry in `~/.claude/self-improvement/applied-changes.md`, else 30 days back. `handled.json` is a JSON list of candidate ids he already decided (applied, rejected, or "no es regla"); it keeps dismissed items from coming back. Skip the flag if the file does not exist.
+Use the session scratchpad for output (zsh `noclobber` is on, hence `>|`). Default `--since` = date of the last entry in `~/.claude/self-improvement/applied-changes.md`; if there is none (first run), omit `--since` and mine all time, and raise `--limit` to 200 so the cut does not hide older patterns. `handled.json` is a JSON list of candidate ids he already decided (applied, rejected, or "no es regla"); it keeps dismissed items from coming back. Skip the flag if the file does not exist.
 
 Each line is a candidate: `id`, `text`, `signals`, `prior_assistant`, `occurrences`, `sessions`, `projects`, `origin`. Signals: `correction`, `rule`, `guardrail` ("no agregues X salvo que…"), `interrupt` (he typed this right after interrupting you, which usually means "not like that"), `rejection` (his words when rejecting a tool call). The regexes favour recall: expect approvals and one-off asks mixed in; judging them is your job in step 2.
 
