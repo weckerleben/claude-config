@@ -8,6 +8,7 @@
 !/rules/
 !/agents/
 !/commands/
+!/docs/
 !/hooks/
 !/scripts/
 !/bootstrap.sh
