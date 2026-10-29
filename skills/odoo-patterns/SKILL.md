@@ -379,24 +379,12 @@ Checklist al portar un módulo v16 → v19: bump de `version` en manifest, `tree
 
 ## Instalar / actualizar / testear (odoo-bin)
 
-Siempre desde `~/dev/eagle`, con el venv raíz y la conf del cliente:
+Layout real en esta máquina: workspace `~/dev/cashea` (no `~/dev/eagle`; `conf/` y `src-odoo/` no existen). Core en `odoo-src/odoo-19.0` y `odoo-src/odoo-16.0`, venv y conf en `.odoo19/` y `.odoo16/`. Flujo completo (DB descartable, log, warnings, baseline contra main, limpieza): skill `odoo-local-verify`.
 
 ```bash
-# Instalar módulo (init) y salir
-venv/bin/python src-odoo/odoo/odoo-bin -c conf/odoo-unifica.conf -d ud19 \
-  -i unifica_payment_bancard --stop-after-init --no-http --log-level=info
-
-# Actualizar módulo tras cambios en Python/XML
-venv/bin/python src-odoo/odoo/odoo-bin -c conf/odoo-cashea.conf -d cashea \
-  -u cashea_jumpcloud --stop-after-init --no-http
-
-# Correr los tests de un módulo (suite propia solamente)
-venv/bin/python src-odoo/odoo/odoo-bin -c conf/odoo-unifica.conf -d test_db \
-  --test-enable --stop-after-init -i unifica_payment_bancard \
-  --test-tags /unifica_payment_bancard
-
-# Varios módulos
-... -i mod1,mod2 --test-tags /mod1,/mod2
+cd ~/dev/cashea && .odoo19/venv/bin/python odoo-src/odoo-19.0/odoo-bin -c .odoo19/odoo.conf \
+  -d <db_descartable> -i <modulo> --stop-after-init --no-http          # instalar
+# -u <modulo> para actualizar; tests: -u <modulo> --test-tags=/<modulo> --http-port=8213 --http-interface=127.0.0.1
 ```
 
 - Cambios solo-Python a veces cargan sin `-u`, pero XML/data/security SIEMPRE requieren `-u`.
