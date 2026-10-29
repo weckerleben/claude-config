@@ -16,7 +16,12 @@ const fs = require('node:fs');
 const { execFileSync } = require('node:child_process');
 
 const ODOO_REMOTE_RE = /cashea-odoo/i;
-const PR_CREATE_RE = /\bgh\s+pr\s+create\b/;
+// `gh pr create` only counts in command position: at the start, after a shell separator
+// or a `-c "` string, behind env assignments or a wrapper. Text that merely mentions it
+// (commit messages, echo, grep) must not be blocked.
+const PR_CREATE_RE = new RegExp(
+  String.raw`(?:^|[;&|(){}\n]|-c\s+['"])\s*(?:[A-Za-z_][A-Za-z0-9_]*=\S*\s+)*(?:(?:command|exec|time|nohup)\s+)?gh\s+pr\s+create\b`
+);
 const BASE_RE = /(?:--base[=\s]+|-B\s*)(\S+)/;
 const PRODUCTION_BASES = new Set(['main', 'master']);
 const VERIFIED_RE = /\bCASHEA_TICKET_VERIFIED=[A-Za-z]+-\d+\b/;

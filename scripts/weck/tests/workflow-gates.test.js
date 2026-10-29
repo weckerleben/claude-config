@@ -45,6 +45,29 @@ test('non-Odoo repos and unrelated commands are ignored', () => {
   assert.equal(evaluatePrMainGate('git push origin HEAD', odooRemote), null);
 });
 
+test('text that only mentions gh pr create is not a command and is ignored', () => {
+  for (const command of [
+    'git commit -m "the hook denies gh pr create toward main"',
+    'echo gh pr create --base main',
+    'grep -n "gh pr create" AGENTS.md',
+    'gh pr view 1 --json title # gh pr create later',
+  ]) {
+    assert.equal(evaluatePrMainGate(command, odooRemote), null, command);
+  }
+});
+
+test('gh pr create in command position is detected behind env vars, wrappers and newlines', () => {
+  for (const command of [
+    'FOO=1 gh pr create --fill',
+    'command gh pr create --fill',
+    'git push\ngh pr create --fill',
+    'bash -c "gh pr create --fill"',
+    '(cd repo && gh pr create --fill)',
+  ]) {
+    assert.equal(evaluatePrMainGate(command, odooRemote)?.decision, 'deny', command);
+  }
+});
+
 test('gh pr create chained after another command is still detected', () => {
   const r = evaluatePrMainGate('git push -u origin HEAD && gh pr create --base main', odooRemote);
   assert.equal(r?.decision, 'deny');
