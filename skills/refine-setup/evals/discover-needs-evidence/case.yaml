@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: discover-needs-evidence
+expected_outcome: |
+  Proposes exactly one skill for the deploy-to-zeus workflow (about 7 sessions) with triggers from William's own words, steps and validation prompts including a neighbor that must not trigger. The 2-session backup flow stays in the backlog and git status is ignored. Nothing is created.
+context:
+  scaffold_script: place-files.sh

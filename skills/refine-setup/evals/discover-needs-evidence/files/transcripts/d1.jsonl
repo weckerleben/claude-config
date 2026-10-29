@@ -1,0 +1,5 @@
+{"type": "user", "timestamp": "2026-10-11T10:00:00Z", "sessionId": "d1", "message": {"role": "user", "content": "deployá a zeus como siempre"}}
+{"type": "assistant", "timestamp": "2026-10-11T10:01:00Z", "sessionId": "d1", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Bash", "input": {"command": "git status"}}]}}
+{"type": "assistant", "timestamp": "2026-10-11T10:01:00Z", "sessionId": "d1", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Bash", "input": {"command": "ssh zeus 'cd /opt/stack && git pull'"}}]}}
+{"type": "assistant", "timestamp": "2026-10-11T10:01:00Z", "sessionId": "d1", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Bash", "input": {"command": "ssh zeus 'cd /opt/stack && docker compose pull && docker compose up -d'"}}]}}
+{"type": "assistant", "timestamp": "2026-10-11T10:01:00Z", "sessionId": "d1", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Bash", "input": {"command": "curl -fsS https://zeus.example/health"}}]}}

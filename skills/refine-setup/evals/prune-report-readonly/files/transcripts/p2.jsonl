@@ -1,0 +1,2 @@
+{"type": "assistant", "timestamp": "2026-10-20T10:02:00Z", "sessionId": "p2", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Skill", "input": {"skill": "used-skill"}}]}}
+{"type": "user", "timestamp": "2026-10-20T10:00:00Z", "sessionId": "p2", "message": {"role": "user", "content": "hola"}}

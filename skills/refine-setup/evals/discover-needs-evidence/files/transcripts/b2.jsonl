@@ -1,0 +1,4 @@
+{"type": "user", "timestamp": "2026-10-20T10:00:00Z", "sessionId": "b2", "message": {"role": "user", "content": "hacé el backup de la base de zeus"}}
+{"type": "assistant", "timestamp": "2026-10-20T10:01:00Z", "sessionId": "b2", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Bash", "input": {"command": "git status"}}]}}
+{"type": "assistant", "timestamp": "2026-10-20T10:01:00Z", "sessionId": "b2", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Bash", "input": {"command": "ssh zeus 'pg_dump appdb | gzip > /tmp/appdb.sql.gz'"}}]}}
+{"type": "assistant", "timestamp": "2026-10-20T10:01:00Z", "sessionId": "b2", "message": {"role": "assistant", "content": [{"type": "tool_use", "name": "Bash", "input": {"command": "scp zeus:/tmp/appdb.sql.gz ~/backups/"}}]}}

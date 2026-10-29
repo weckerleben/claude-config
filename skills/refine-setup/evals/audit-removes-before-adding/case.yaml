@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: audit-removes-before-adding
+expected_outcome: |
+  Removal pass first (default-behavior line, duplicated rule with both line numbers, rule already enforced by the force-push hook, stale ./legacy-deploy.sh that does not exist). The English-commits rule is reported as violated with quotes from both turns and a structural mechanism is proposed. Nothing applied.
+context:
+  scaffold_script: place-files.sh

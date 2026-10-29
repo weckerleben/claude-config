@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: prune-report-readonly
+expected_outcome: |
+  Reports old-unused and another-old-unused as never-used prune candidates, used-skill as used (3 uses), new-skill as too new, ignores ecc: plugin skills, and deletes nothing (proposes a reversible move).
+context:
+  scaffold_script: place-files.sh

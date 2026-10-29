@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: retro-flags-regression
+expected_outcome: |
+  A Spanish four-section retro that flags the Spanish commit message as a regression of the rule applied on 2026-10-20 with raised severity and a hook suggestion, notices three identical curl calls as a missing script, cites only real moments, includes a Sin acción list and writes nothing.
+context:
+  scaffold_script: place-files.sh
