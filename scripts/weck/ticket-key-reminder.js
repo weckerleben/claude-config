@@ -13,7 +13,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-const KEY_RE = /\b(?:EP|ODOO)-\d+\b/gi;
+// ODOO is case-sensitive and must not be a version path (odoo-16.0); EP also matches branch names (ep-535).
+const KEY_RE = /\b(?:[Ee][Pp]|ODOO)-\d+(?![\d.])\b/g;
 
 function findTicketKeys(prompt) {
   const keys = (prompt || '').match(KEY_RE) || [];

@@ -42,6 +42,11 @@ test('findTicketKeys extracts EP and ODOO keys once, uppercased', () => {
   assert.deepEqual(findTicketKeys('sin tickets acá, solo HELP-1 o STEP-5'), []);
 });
 
+test('findTicketKeys ignores Odoo version paths but keeps real ODOO keys', () => {
+  assert.deepEqual(findTicketKeys('~/dev/cashea/odoo-src/odoo-16.0 y odoo-19'), []);
+  assert.deepEqual(findTicketKeys('ODOO-19 y ep-7'), ['ODOO-19', 'EP-7']);
+});
+
 test('buildTicketReminder names the keys and the In Progress order', () => {
   const text = buildTicketReminder(['EP-535']);
   assert.match(text, /EP-535/);
