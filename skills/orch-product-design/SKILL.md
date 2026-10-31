@@ -10,7 +10,16 @@ can: the **single intake**, the **order and the join**, the **combined gates** a
 the **one contract**. Do not copy their phases here: invoke them and follow them.
 
 - `orch-ux-design` - what people can do, in what order, where things live.
-- `orch-brand-system` - how it looks, sounds and moves; tokens; Figma library.
+- `orch-brand-system` - how it looks, sounds and moves; one `brand/DESIGN.md`
+  (Google DESIGN.md format) as the single token source; Figma library.
+
+Their method comes from audited upstream playbooks pinned under
+`~/.claude/vendor/` (`intent` for UX; `impeccable` playbooks, the DESIGN.md spec
+and CLI wrapper, and brand checklists for the visual side). Each folder has an
+`UPSTREAM.md` with origin, commit, license and audit verdict; read it before
+using a piece. Nothing in `vendor/` is installed as a global skill and no
+upstream script or binary is run. Anything missing from there gets the global
+"Investigar y auditar antes de construir" treatment before being built.
 
 Both are interactive and each has its own gates. Run their agent work as
 described there; present the user's approvals **one at a time, in the order
@@ -73,7 +82,7 @@ and the "before" evidence; drop any preserve-the-old logic.
 
 ### 3 - UX structure
 Run `orch-ux-design` Phases 1 to 5 (users and jobs, IA, flows, grayscale
-wireframes with the state matrix, interaction rules, microcopy).
+wireframes with the state inventory, interaction rules, microcopy).
 **GATE B:** user walks the top tasks on the wireframes and approves structure.
 Nothing visual is skinned before this.
 
@@ -90,9 +99,9 @@ overlap in time after Gate A. The user-facing gates stay sequential.
 
 ### 5 - Join: high-fidelity screens
 Apply the approved tokens to the approved wireframes. In Figma, follow
-`orch-brand-system` Phase 6 (library from `design-tokens.json`, code-first) and
+`orch-brand-system` Phase 6 (library from the `dtcg` export of `brand/DESIGN.md`, code-first) and
 then `figma-generate-design`: one screen per top-task step, **every state from the
-state matrix**, both themes, desktop and mobile, bound to variables, no hardcoded
+state inventory**, both themes, desktop and mobile, bound to variables, no hardcoded
 values. Read `figma-use` before every `use_figma` call; calls strictly
 sequential; ledger on disk; skip Figma and say why if `whoami` shows no write
 access. Build the same screens as a coded HTML preview when Figma is out of reach.
@@ -133,7 +142,7 @@ attribution.
 - Gates A to E each explicitly approved, in order, one at a time.
 - Strategy ran once and fed both tracks; baseline ran once (brownfield).
 - UX structure was approved in grayscale before any identity was applied.
-- Hi-fi screens cover every state in the state matrix, in both themes and sizes.
+- Hi-fi screens cover every state in the state inventory, in both themes and sizes.
 - Independent critique ran and no severity 3 or 4 finding is open unexplained.
 - `validation:` is stated honestly; a combined human test script was delivered.
 - One merged contract is in the project `CLAUDE.md` with a mechanical check.
