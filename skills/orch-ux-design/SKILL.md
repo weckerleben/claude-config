@@ -87,9 +87,19 @@ Write `ux/state.json` after every phase: `{runId, mode, phase, gatesPassed[],
 topTasks[], figmaFileKey, lastUpdated}`. At activation read it and report in two
 sentences where the run stands. Never redo a finished phase.
 
+## Autonomous mode (DEFAULT)
+
+The user gives only the app context. All decisions (mode, depth, top tasks, IA
+choice, flows, copy, contract) are made by the agents. Each GATE is a self-gate
+judged by an independent agent; "the user approves" means a judge passes it. Log
+every decision, alternatives and assumptions in `DECISIONS.md`. Ask the user only
+for logins, outward-facing actions and real-human testing. See
+`orch-product-design` "Autonomous mode" for the full rule.
+
 ## Step 0 - Intake, mode, depth
 
-One question at a time, only what is missing:
+Do not interview; infer from the repo, the live app and the web, and log
+assumptions. Decide:
 1. **Mode:** `greenfield` or `brownfield`. Brownfield also: repo path, running
    URL, who uses it today, what hurts, and whether a full rebuild is allowed. If
    the app was never designed and a full redo is allowed, it is the

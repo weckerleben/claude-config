@@ -21,9 +21,35 @@ using a piece. Nothing in `vendor/` is installed as a global skill and no
 upstream script or binary is run. Anything missing from there gets the global
 "Investigar y auditar antes de construir" treatment before being built.
 
-Both are interactive and each has its own gates. Run their agent work as
-described there; present the user's approvals **one at a time, in the order
-below**, never several at once.
+## Autonomous mode (DEFAULT, William's rule 2026-10-31)
+
+The user supplies **only the app context** (name, what it does, repo path, URL,
+users if known). Everything else is decided by the agents: mode, depth, strategy,
+top tasks, IA, brand direction, palette, type, icons, motion, copy, contract.
+Never ask the user to choose, approve or confirm a design decision.
+
+- Every "GATE" below becomes a **self-gate**: an independent judge (a fresh
+  `general-purpose` agent, `design-critic`, or `ecc:a11y-architect`, never the
+  agent that produced the work) scores the artifact against the criteria of that
+  gate. Pass -> continue. Fail -> fix and re-judge, max 3 rounds, then continue
+  with the best version and log the open issue.
+- Where a skill says "the user picks / approves / answers", the agent picks the
+  option that best fits the strategy and writes the choice and the rejected
+  alternatives with reasons in `DECISIONS.md` (repo root, append-only: date, phase,
+  decision, why, alternatives, confidence).
+- Missing facts are inferred from the repo, the running app (Claude in Chrome)
+  and the web; an inference is logged as an assumption, not asked.
+- Ask the user ONLY for what no agent can do or obtain: logins/2FA, paid or
+  outward-facing actions, real-human validation sessions, and facts that exist
+  only in their head and cannot be inferred (then ask once, batched, and proceed
+  on the best assumption if unanswered).
+- Commit/push stays under the repo's own rules; the design contract is written to
+  the project `CLAUDE.md` without waiting for approval, in a branch/path that does
+  not touch production when told so (e.g. everything under `/v2`).
+- When another chat is implementing, answer its design questions yourself by
+  amending the spec first (DESIGN.md / SPEC.md), then replying with the file.
+
+Run the sub-skills' agent work as described there, with the same autonomy rule.
 
 ## What AI can and cannot do here (state it once, at Step 0)
 
@@ -35,9 +61,11 @@ exploration only.
 
 ## Step 0 - One intake, one mode
 
-Ask once, one question at a time, only what is missing:
-1. The product in the user's words; users; platforms; languages.
-2. **Mode** (decides the whole run):
+Do not interview. Read what the user gave, then fill every gap yourself from the
+repo, the live app and the web; log assumptions in `DECISIONS.md`. Decide:
+1. The product, users, platforms, languages (inferred, logged).
+2. **Mode** (the agent decides: no brand/design artifacts found -> blank-slate;
+   real visual history -> brownfield-with-identity; no app -> greenfield):
    - `greenfield` - nothing built. Run both skills as written.
    - `brownfield-with-identity` - an app exists and has real brand/visual
      history worth keeping. `orch-brand-system` brownfield mode (evolve by
@@ -45,9 +73,10 @@ Ask once, one question at a time, only what is missing:
    - `brownfield-blank-slate` - an app exists but was never designed (no brand,
      no UI/UX work) and a full redo is allowed. Everything is `replace`; keep only
      the capability inventory and real user workflows.
-3. Depth: **lite** (one sitting, 3 top tasks, 4 brand modules) or **full**.
-   Recommend lite for a lab experiment.
-4. Repo path, running URL, Figma account (checked with `whoami` before any write).
+3. Depth, decided by the agent: **lite** (3 top tasks, 4 brand modules) when the
+   app has up to about 10 distinct screens, **full** above that.
+4. Repo path, running URL (given or found), Figma account (checked with `whoami`
+   before any write; skip Figma and log it if no write access).
 
 Write `design-state.json` at the repo root: `{runId, mode, depth, phase,
 gatesPassed[], chosenDirection, topTasks[], figmaFileKey, lastUpdated}`. On every
@@ -139,7 +168,7 @@ attribution.
 ## Verification (the run is done when all are true)
 
 - Mode and depth declared at Step 0; AI limits stated once.
-- Gates A to E each explicitly approved, in order, one at a time.
+- Gates A to E each passed by an independent judge, in order, logged in `DECISIONS.md`.
 - Strategy ran once and fed both tracks; baseline ran once (brownfield).
 - UX structure was approved in grayscale before any identity was applied.
 - Hi-fi screens cover every state in the state inventory, in both themes and sizes.

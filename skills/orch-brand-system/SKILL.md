@@ -84,9 +84,22 @@ Write `brand/state.json` after every phase: `{runId, mode, phase, gatesPassed[],
 chosenDirection, figmaFileKey, lastUpdated}`. At activation read it and report in
 two sentences where the run stands. Never restart a finished phase.
 
+## Autonomous mode (DEFAULT)
+
+The user gives only the app context. Strategy, feelings, the choice among the three
+directions, palette, type, icons, logo, motion and the contract are decided by the
+agents. Each GATE is a self-gate: an independent judge (`design-critic`, a fresh
+`general-purpose` agent, `ecc:a11y-architect`) scores it; pass -> continue, fail ->
+fix, max 3 rounds. "The user picks/approves/answers" means the agent picks the
+direction that best fits the strategy and records it and the rejected ones in
+`DECISIONS.md`. `brand-discovery` runs as an agent-led synthesis from the repo, the
+live app and web research, not as an interview. Ask the user only for logins,
+outward-facing actions and real-human validation. See `orch-product-design`
+"Autonomous mode".
+
 ## Step 0 - Intake, mode, depth
 
-One question at a time, only what is missing:
+Do not interview; infer and log assumptions. Decide:
 1. **Mode:** `greenfield`, `brownfield` (an app exists), or the **blank-slate**
    variant of brownfield (it exists but was never designed and a full redo is
    allowed). Brownfield: repo path, running URL, existing Figma, what hurts,
@@ -101,8 +114,8 @@ Declare mode, depth and output directory in one line the user can override.
 
 ## Phase 1 - Strategy
 
-1. Run `brand-discovery` at the chosen depth (one question at a time; do not
-   answer for the user). Full depth: add the competitor skills to find **visual
+1. Run `brand-discovery` at the chosen depth in synthesis mode (the agent answers
+   each module from evidence and logs it as assumption). Full depth: add the competitor skills to find **visual
    white space**.
 2. Output `modules/90_SYNTHESIS.md` (or the lite equivalent).
 
