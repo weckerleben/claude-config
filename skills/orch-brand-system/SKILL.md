@@ -292,6 +292,15 @@ typography, icons, shape language, motion, imagery) choose `keep` /
 migration cost. Default to `consolidate` or `evolve`. `replace` needs a stated
 reason tied to the gap table. Gate 1 now approves strategy plus this table.
 
+**Blank-slate variant.** If the baseline shows no real identity (no consistent
+palette or type, no logo, no brand, never designed), there is nothing to
+preserve: B3 collapses to `replace` for every element, the "evolve by default"
+rule does not apply, and Phase 2 runs as greenfield (three from-scratch
+directions). Keep B1 (baseline, drift counts, "before" screenshots), the
+migration map and the Phase 8 ratchet. The continuity cost that remains is
+workflow familiarity for existing users, which belongs to `orch-ux-design`, not
+here. For a whole product (identity plus UX) start from `orch-product-design`.
+
 **Phase 2 becomes anchored divergence.** Still three directions, but anchored on
 the current identity: A = consolidate (today's identity cleaned into tokens),
 B = evolve (same recognizable core, stronger execution), C = reposition (a
