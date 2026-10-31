@@ -1,6 +1,6 @@
 ---
 name: orch-brand-system
-description: Orchestrates a complete visual identity BEFORE any app code exists - brand strategy, emotional and commercial brief, divergent visual directions, palette, typography, icons, logo exploration, motion language, design tokens, a Figma library, adversarial critique, and a binding design contract the implementation must obey. Use when starting a new app or product from an idea and the user wants colors, icons, animations, brand and a visual guide fixed up front so development does not improvise ("armame la marca", "identidad visual", "guia visual", "design system desde cero", "que no improvise el diseno", "branding de la app"). Not for auditing an existing UI (use ecc:design-system audit) and not for building features (use orch-feature-team).
+description: Orchestrates a complete visual identity either for a NEW app before any code exists (greenfield) or for an EXISTING app that must be audited, consolidated and improved (brownfield) - brand strategy, emotional and commercial brief, divergent visual directions, palette, typography, icons, logo exploration, motion language, design tokens, a Figma library, adversarial critique, and a binding design contract the implementation must obey. Use when starting a new app or product from an idea and the user wants colors, icons, animations, brand and a visual guide fixed up front so development does not improvise ("armame la marca", "identidad visual", "guia visual", "design system desde cero", "que no improvise el diseno", "branding de la app"). Also use for "revisar y mejorar lo que ya esta hecho", "la UI esta inconsistente", "ordenar el diseno de esta app". Not for a one-off UI audit with no redesign intent (use ecc:design-system audit) and not for building features (use orch-feature-team).
 ---
 
 # Orchestrated Brand System
@@ -75,7 +75,15 @@ report in two sentences where the run stands. Long phases span sessions
 ## Step 0 - Intake and depth
 
 Ask only what is missing, one question at a time:
-1. The idea in the user's words (problem, who it is for, what it does).
+0. **Mode:** `greenfield` (nothing built yet) or `brownfield` (an app exists and
+   must be reviewed and improved). Brownfield changes the flow: read
+   "Brownfield mode" below and apply its deltas to the phases. Extra brownfield
+   questions: repo path and a running URL, existing Figma file if any, what hurts
+   today (inconsistent, dated, brand unclear, conversion), real users in
+   production (continuity cost), and how much may change (see B3).
+1. The idea in the user's words (problem, who it is for, what it does). In
+   brownfield: what the product is meant to be, in the user's words, not what
+   the current UI says.
 2. Platforms: web, iOS, Android. This decides the motion stack (the `motion-*`
    skills are React/Next specific; for native, motion is specified in
    `MOTION.md` as tokens and the platform skill implements it) and the icon set.
@@ -253,7 +261,68 @@ Do not self-approve. Independent passes, in this order:
    text. Commit only after confirmation, in the repo's commit convention (detect
    per the global dual policy). No Claude attribution anywhere.
 
+## Brownfield mode (existing app) - deltas to the phases
+
+A rebrand of a live product has a cost that greenfield does not: users lose
+recognition, and a migration can break working screens. So the default is
+**evolve, not redesign**, and every change must justify its cost.
+
+**B1 - Baseline (before Phase 1).** Record the "before", read-only:
+1. `design-system` Mode 1 on the codebase: extract the tokens that actually
+   exist (colors, type, spacing, radius, shadows, breakpoints).
+2. `design-system` Mode 2 audit (10 dimensions) and Mode 3 slop-check on the
+   running URL, key pages.
+3. Count the drift: hardcoded hex/rgb values, distinct font sizes, distinct
+   spacings, near-duplicate colors. These numbers are the baseline for Phase 8.
+4. Screenshots of the key screens at 375 / 768 / 1440, both themes if present,
+   saved to `brand/baseline/`. Claude in Chrome per the global rule.
+5. If a Figma file exists: `get_libraries`, `get_variable_defs`,
+   `search_design_system`, and note code-vs-Figma drift. No writes yet.
+6. `ecc:a11y-architect` baseline (contrast, focus, targets).
+
+**B2 - Recover the implicit brand (replaces Phase 1).** Run `brand-discovery`
+as a recovery interview: what the brand is meant to feel like, then compare with
+what the baseline communicates. Output a **gap table**: intended feelings vs
+perceived feelings vs the visual evidence, each row marked hypothesis. Real user
+feedback or analytics, if the user has them, outrank the model's reading.
+
+**B3 - Scope the change (part of Gate 1).** Per element (logo, palette,
+typography, icons, shape language, motion, imagery) choose `keep` /
+`consolidate` / `evolve` / `replace`, with the user-visible impact and the
+migration cost. Default to `consolidate` or `evolve`. `replace` needs a stated
+reason tied to the gap table. Gate 1 now approves strategy plus this table.
+
+**Phase 2 becomes anchored divergence.** Still three directions, but anchored on
+the current identity: A = consolidate (today's identity cleaned into tokens),
+B = evolve (same recognizable core, stronger execution), C = reposition (a
+deliberate shift, only if B3 allowed `replace`). Previews use real current
+screens, not invented ones, so Gate 2 compares before and after on the same
+content.
+
+**Phase 4 starts from the extracted tokens**, not a blank scale. Produce
+`brand/MIGRATION.md`: a map old value to new token for every extracted value,
+flagging anything that changes pixels visibly.
+
+**Phase 6 is reconciliation, not construction.** Use `figma-generate-library`
+with its reconciliation scope: diff code against Figma and update only what
+drifted. Never rebuild a valid existing library.
+
+**Phase 7 adds regression evidence.** Same screens, same viewports as the
+baseline, before/after side by side. Tests and build stay green. Anything that
+changes behavior is out of scope and gets reported, not fixed here.
+
+**Phase 8 adds a ratchet and a hand-off.** The mechanical check must not fail
+the whole repo on day one. Commit a baseline file listing today's violations;
+the check fails only on NEW violations and the baseline can only shrink. The
+migration itself is not done by this skill: hand it off per screen or per
+component to `orch-refine-code` (behavior-preserving) or `orch-change-feature`,
+in the order set by `MIGRATION.md`, each step a reviewable commit.
+
 ## Verification (the run is done when all are true)
+
+- Mode (greenfield or brownfield) was declared at Step 0. In brownfield, the
+  baseline screenshots, drift counts, gap table and per-element scope table exist
+  before any direction is proposed, and the migration is handed off, not done.
 
 - Depth and platforms were declared at Step 0, and the AI limits were stated.
 - Gate 1, Gate 2 and Gate 3 were each explicitly approved by the user.
