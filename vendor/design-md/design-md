@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Pinned runner for the Google DESIGN.md CLI (lint | diff | export | spec).
+# Installs from package-lock.json (exact versions + integrity hashes) with
+# lifecycle scripts disabled, into a cache outside this repo, then execs it.
+# Only run it on DESIGN.md files you wrote: see UPSTREAM.md (zod advisory).
+set -euo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/design-md-0.4.0"
+BIN="$CACHE/node_modules/.bin/design.md"
+
+if [ ! -x "$BIN" ]; then
+  mkdir -p "$CACHE"
+  cp "$HERE/package.json" "$HERE/package-lock.json" "$CACHE/"
+  (cd "$CACHE" && npm ci --ignore-scripts --no-audit --no-fund >&2)
+fi
+
+exec "$BIN" "$@"
