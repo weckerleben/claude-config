@@ -94,6 +94,14 @@ else
   warn "ponytail marketplace unavailable; skipped"
 fi
 
+step "Installing graphify (code knowledge graph CLI + skill)"
+if command -v uv >/dev/null 2>&1; then
+  command -v graphify >/dev/null 2>&1 || run uv tool install graphifyy
+  run graphify install || warn "graphify install failed"
+else
+  warn "uv not found; skipped graphify (install uv, then re-run)"
+fi
+
 step "Configuring this repo's git identity and credentials"
 if [ -d "$CLAUDE_DIR/.git" ]; then
   [ -n "$(git -C "$CLAUDE_DIR" config --local user.name || true)" ]  || run git -C "$CLAUDE_DIR" config user.name "$GIT_NAME"

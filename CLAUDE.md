@@ -457,3 +457,7 @@ chat cae al `effortLevel` top-level (`high`) pero cada subagente Sonnet respeta
 su `effort:` propio. Si algún día se pinea un modelo ahí, se clava el effort de
 todos los subagentes de ese modelo — tenerlo presente antes de tocar
 `modelSettings`.
+
+# graphify
+- **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
+When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.

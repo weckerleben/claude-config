@@ -32,6 +32,7 @@ Requirements: `git`, `node` 18+, `python3`, the `claude` CLI and `gh`.
 - Installs ECC rules into `~/.claude/rules/ecc`.
 - Registers the Cashea marketplace and its plugins.
 - Installs the `ponytail@ponytail` plugin (marketplace `DietrichGebert/ponytail`).
+- Installs the `graphifyy` CLI with `uv tool install` and registers its skill (`graphify install`, user level, soft mode; no `--strict`).
 - Sets the repo's local git identity and the `gh` credential helper.
 
 ## Updating ECC
