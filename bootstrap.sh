@@ -87,6 +87,13 @@ if [ "$SKIP_CASHEA" = 0 ]; then
   run claude plugin install frontend-design@claude-plugins-official || warn "could not install frontend-design"
 fi
 
+step "Installing ponytail (lazy-senior-dev prompt, band and board)"
+if run claude plugin marketplace add DietrichGebert/ponytail; then
+  run claude plugin install ponytail@ponytail || warn "could not install ponytail"
+else
+  warn "ponytail marketplace unavailable; skipped"
+fi
+
 step "Configuring this repo's git identity and credentials"
 if [ -d "$CLAUDE_DIR/.git" ]; then
   [ -n "$(git -C "$CLAUDE_DIR" config --local user.name || true)" ]  || run git -C "$CLAUDE_DIR" config user.name "$GIT_NAME"

@@ -175,13 +175,20 @@
     "cashea-hub@cashea-skills": true,
     "cashea-web@cashea-skills": true,
     "ecc@ecc": true,
-    "cashea-goku@cashea-skills": true
+    "cashea-goku@cashea-skills": true,
+    "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
     "cashea-skills": {
       "source": {
         "source": "github",
         "repo": "cashea-bnpl/cashea-skills"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
       }
     }
   },

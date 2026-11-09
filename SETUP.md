@@ -31,6 +31,7 @@ Requirements: `git`, `node` 18+, `python3`, the `claude` CLI and `gh`.
 - Installs the `ecc@ecc` plugin from that local clone (not from the GitHub marketplace).
 - Installs ECC rules into `~/.claude/rules/ecc`.
 - Registers the Cashea marketplace and its plugins.
+- Installs the `ponytail@ponytail` plugin (marketplace `DietrichGebert/ponytail`).
 - Sets the repo's local git identity and the `gh` credential helper.
 
 ## Updating ECC
