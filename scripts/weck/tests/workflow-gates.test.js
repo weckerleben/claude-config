@@ -40,6 +40,19 @@ test('gh pr create targeting another branch does not ask', () => {
   assert.equal(evaluatePrMainGate('gh pr create -B staging --fill', odooRemote), null);
 });
 
+test('an explicit --repo or -R decides the target, not the repo of the working directory', () => {
+  const workflows = 'cashea-bnpl/odoo-workflows';
+  for (const flag of [`--repo ${workflows}`, `--repo=${workflows}`, `-R ${workflows}`]) {
+    assert.equal(evaluatePrMainGate(`gh pr create ${flag} --base main --fill`, odooRemote), null, flag);
+  }
+  for (const repo of ['cashea-bnpl/cashea-odoo-v19', 'cashea-bnpl/cashea-odoo']) {
+    for (const flag of [`--repo ${repo}`, `--repo=${repo}`, `-R ${repo}`]) {
+      const r = evaluatePrMainGate(`gh pr create ${flag} --base main --fill`, otherRemote);
+      assert.equal(r?.decision, 'deny', flag);
+    }
+  }
+});
+
 test('non-Odoo repos and unrelated commands are ignored', () => {
   assert.equal(evaluatePrMainGate('gh pr create --base main', otherRemote), null);
   assert.equal(evaluatePrMainGate('gh pr view 12 --json state', odooRemote), null);

@@ -10,7 +10,8 @@
  * Jira, so it denies `gh pr create` and tells Claude to check the ticket itself.
  * Once checked, Claude re-runs the command prefixed with
  * `CASHEA_TICKET_VERIFIED=<KEY>`, which is the only way through. The default
- * base when `--base` is omitted is the production branch, so it is covered too.
+ * base when `--base` is omitted is the production branch, so it is covered too. An explicit
+ * `--repo`/`-R` is judged instead of the remote of the working directory.
  */
 
 const fs = require('node:fs');
@@ -24,6 +25,7 @@ const PR_CREATE_RE = new RegExp(
   String.raw`(?:^|[;&|(){}\n]|-c\s+['"])\s*(?:[A-Za-z_][A-Za-z0-9_]*=\S*\s+)*(?:(?:command|exec|time|nohup)\s+)?gh\s+pr\s+create\b`
 );
 const BASE_RE = /(?:--base[=\s]+|-B\s*)(\S+)/;
+const REPO_RE = /(?:--repo[=\s]+|-R\s*)(\S+)/;
 const PRODUCTION_BASES = new Set(['main', 'master']);
 const VERIFIED_RE = /\bCASHEA_TICKET_VERIFIED=[A-Za-z]+-\d+\b/;
 
@@ -39,7 +41,9 @@ const REASON = [
 
 function evaluatePrMainGate(command, remoteUrl) {
   if (!PR_CREATE_RE.test(command || '')) return null;
-  if (!ODOO_REMOTE_RE.test(remoteUrl || '')) return null;
+  // An explicit --repo/-R is the real target, whatever repo the working directory is in.
+  const target = (command.match(REPO_RE)?.[1] || '').replace(/^['"]|['"]$/g, '') || remoteUrl;
+  if (!ODOO_REMOTE_RE.test(target || '')) return null;
   const base = (command.match(BASE_RE)?.[1] || 'main').replace(/^['"]|['"]$/g, '');
   if (!PRODUCTION_BASES.has(base)) return null;
   if (VERIFIED_RE.test(command)) return null;
