@@ -12,6 +12,7 @@ test('gh pr create without --base is blocked in an Odoo repo and tells Claude to
   const r = evaluatePrMainGate('gh pr create --title "[FIX] sale: x" --body y', odooRemote);
   assert.equal(r.decision, 'deny');
   assert.match(r.reason, /A PRODUCCION/);
+  assert.match(r.reason, /Pending Deploy/);
   assert.match(r.reason, /getJiraIssue/);
   assert.match(r.reason, /CASHEA_TICKET_VERIFIED=/);
 });

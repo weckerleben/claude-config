@@ -5,7 +5,8 @@
  * PR-to-main gate (PreToolUse, Bash).
  *
  * In Odoo repos a PR to the production branch (`main` in v19, `master` in v16)
- * is only opened once the Jira ticket is in `A PRODUCCION`. A hook cannot read
+ * is only opened once the Jira ticket is in its production-ready status: `Pending Deploy`
+ * for ODOO tickets (the board in use) or `A PRODUCCION` for legacy EP tickets. A hook cannot read
  * Jira, so it denies `gh pr create` and tells Claude to check the ticket itself.
  * Once checked, Claude re-runs the command prefixed with
  * `CASHEA_TICKET_VERIFIED=<KEY>`, which is the only way through. The default
@@ -27,12 +28,13 @@ const PRODUCTION_BASES = new Set(['main', 'master']);
 const VERIFIED_RE = /\bCASHEA_TICKET_VERIFIED=[A-Za-z]+-\d+\b/;
 
 const REASON = [
-  'PR a la rama de producción en un repo Odoo: solo se abre con el ticket en `A PRODUCCION`.',
+  'PR a la rama de producción en un repo Odoo: solo se abre con el ticket en su estado de listo para producción:',
+  '`Pending Deploy` si es `ODOO-` (tablero vigente) o `A PRODUCCION` si es `EP-` (legado).',
   'Antes de reintentar, leé el ticket con `getJiraIssue` (la clave está en la rama o en el título del PR)',
   'y mirá su estado.',
-  'Si NO está en `A PRODUCCION`: no abras el PR; la rama se queda en commit y push, y avisale a William.',
+  'Si NO está en ese estado: no abras el PR; la rama se queda en commit y push, y avisale a William.',
   'Si SÍ está: reintentá el mismo comando con el prefijo `CASHEA_TICKET_VERIFIED=<CLAVE>`,',
-  'por ejemplo `CASHEA_TICKET_VERIFIED=EP-123 gh pr create ...`. No pongas el prefijo sin haber leído el estado.',
+  'por ejemplo `CASHEA_TICKET_VERIFIED=ODOO-123 gh pr create ...`. No pongas el prefijo sin haber leído el estado.',
 ].join(' ');
 
 function evaluatePrMainGate(command, remoteUrl) {

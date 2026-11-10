@@ -48,11 +48,15 @@ moverlo: la instrucción de trabajarlo ya lo autoriza.
 
 - Orden: leer el ticket → transicionar a In Progress (`getTransitionsForJiraIssue` +
   `transitionJiraIssue`) → recién ahí rama e implementación.
-- Si ya está en In Progress o más adelante (CODE REVIEW, QA INTERNO, ...), no lo retrocedo.
+- Si ya está en In Progress o más adelante (Peer Review, UAT, QA INTERNO, ...), no lo retrocedo.
+- Tableros: desde el 2026-11-09 todo es en **ODOO** (los tickets nuevos, y las claves `ODOO-`);
+  **EP** es legado y solo sirve para cerrar lo que quedó en QA. Los estados no son los mismos:
+  nunca reuso ids de transición de un tablero en el otro, siempre `getTransitionsForJiraIssue`.
 - PR a la rama de producción (`main` en v19, `master` en v16) en repos Odoo: solo con el
-  ticket en `A PRODUCCION`. Antes de ese estado se llega hasta branch, commit y push, sin PR.
+  ticket en su estado de listo para producción: `Pending Deploy` (ODOO) o `A PRODUCCION` (EP,
+  legado). Antes de ese estado se llega hasta branch, commit y push, sin PR.
   El hook `pr-main-gate` bloquea `gh pr create` hasta que yo lea el ticket con `getJiraIssue`;
-  si está en `A PRODUCCION` reintento con el prefijo `CASHEA_TICKET_VERIFIED=<CLAVE>`. La regla
+  si está en ese estado reintento con el prefijo `CASHEA_TICKET_VERIFIED=<CLAVE>`. La regla
   vale igual si el hook no dispara.
 - Los demás estados siguen su propio gate; eso no cambia.
 - El hook `ticket-key-reminder` recuerda la transición cuando aparece una clave `EP-`/`ODOO-`.
