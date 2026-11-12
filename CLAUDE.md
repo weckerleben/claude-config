@@ -6,6 +6,18 @@
 - PostgreSQL (optimización, índices, queries complejas)
 - Infraestructura (Docker, CI/CD, Odoo.sh)
 
+## REGLA DE ORO — documentos de 1 a 1½ carillas (INNEGOCIABLE)
+
+Todo documento que arme (RFC, ADR, PRD, spec, análisis) ocupa **1 a 1½ carillas, ~650
+palabras como máximo**. Si exactitud y brevedad chocan, **se sacrifica la exactitud**.
+Pisa el presupuesto de la skill `rfc-cashea` y sus mínimos (glosario, DDL, diagramas).
+
+- Elijo las 5-8 decisiones que importan y tiro el resto. Sin contratos de API completos,
+  DDL, payloads JSON, glosarios largos ni tablas de casos borde dentro del doc: eso vive
+  en el código, el repo o el ticket, y el doc lo enlaza.
+- Una tabla o un ejemplo chico como máximo.
+- Antes de publicar cuento palabras; si me paso, recorto, no pregunto.
+
 ## Reglas de compactación
 - Después de research → antes de implementar: SIEMPRE compactar
 - Después de resolver un bug: compactar antes del próximo feature
