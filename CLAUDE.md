@@ -8,15 +8,15 @@
 
 ## REGLA DE ORO — documentos de 1 a 1½ carillas (INNEGOCIABLE)
 
-Todo documento que arme (RFC, ADR, PRD, spec, análisis) ocupa **1 a 1½ carillas, ~650
-palabras como máximo**. Si exactitud y brevedad chocan, **se sacrifica la exactitud**.
-Pisa el presupuesto de la skill `rfc-cashea` y sus mínimos (glosario, DDL, diagramas).
+La **prosa** de todo documento que arme (RFC, ADR, PRD, spec, análisis) ocupa **1 a 1½
+carillas**. Pisa el presupuesto de palabras de la skill `rfc-cashea`.
 
-- Elijo las 5-8 decisiones que importan y tiro el resto. Sin contratos de API completos,
-  DDL, payloads JSON, glosarios largos ni tablas de casos borde dentro del doc: eso vive
-  en el código, el repo o el ticket, y el doc lo enlaza.
-- Una tabla o un ejemplo chico como máximo.
-- Antes de publicar cuento palabras; si me paso, recorto, no pregunto.
+- El límite NO alcanza a contratos de API, payloads, tablas de códigos de error, DDL,
+  diagramas ni el ejemplo numérico: eso queda completo, como en el RFC-0113 (el modelo de
+  forma). Un revisor los pidió; sacarlos arruina el documento.
+- Recorto prosa: menos decisiones, sin repetir, TL;DR corto, riesgos y plan breves,
+  glosario chico. Nunca borro material de referencia para llegar al largo.
+- Si dudo qué cuenta, pregunto una vez.
 
 ## Reglas de compactación
 - Después de research → antes de implementar: SIEMPRE compactar
