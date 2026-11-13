@@ -70,6 +70,22 @@ moverlo: la instrucción de trabajarlo ya lo autoriza.
   El hook `pr-main-gate` bloquea `gh pr create` hasta que yo lea el ticket con `getJiraIssue`;
   si está en ese estado reintento con el prefijo `CASHEA_TICKET_VERIFIED=<CLAVE>`. La regla
   vale igual si el hook no dispara.
+- **Todos los PR de los repos de Cashea donde está instalada la App "Cashea Odoo CI"
+  (`cashea-odoo-v19`, `cashea-odoo`) los abre el bot `cashea-odoo-ci[bot]`, nunca yo con la
+  cuenta de William**, con auto-merge (squash): un autor no puede aprobar su propio PR. Vale
+  para cualquier PR (módulos, CI, `.claude/`, AGENTS.md, docs, `.github/workflows/`).
+  - El push va siempre con el usuario de William por SSH
+    (`git push git@github.com:cashea-bnpl/<repo>.git HEAD:<rama>`); el bot solo abre el PR.
+  - Se abre con `python3 ~/.config/cashea-odoo-ci/ci_app.py pr <owner/repo> --base <b>
+    --head <rama> --title T --body-file F` (crea el PR y activa el auto-merge). Nunca
+    `gh pr create` ni `ci_app.py push`. La clave `key.pem` no se lee ni se imprime.
+  - Si por error abrí uno con la cuenta de William: lo cierro con un comentario ("Closing to
+    reopen it as cashea-odoo-ci[bot], so that a reviewer other than the author can approve
+    it. No content change.") y abro el nuevo **con la misma rama**, sin crear otra.
+  - No cambia el gate del ticket de arriba. Auto-fix no se puede prender en PRs del bot.
+  - Antes de decir que no existe una herramienta para algo de este flujo, busco en
+    `~/.config/cashea-odoo-ci/` y en la memoria del proyecto `cashea-odoo-v19`
+    (`ci-prs-as-cashea-odoo-ci-bot`), que desde otra carpeta no se carga sola.
 - Los demás estados siguen su propio gate; eso no cambia.
 - El hook `ticket-key-reminder` recuerda la transición cuando aparece una clave `EP-`/`ODOO-`.
 
