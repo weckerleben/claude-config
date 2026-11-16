@@ -172,6 +172,16 @@ scripts/odoo_query.py search ir.config_parameter "[['key','like','bq_']]" --fiel
 
 Once you can query the warehouse, use it to size the fix rather than reason about it. Counting how many rows actually satisfy each arm of a condition turns "this filter looks equivalent" into a number.
 
+### When the question is who changed what, and when: the audit log
+
+On Odoo 19 every write, create and delete is audited with old and new values, user, session and
+HTTP request, down to the click path a user followed. Use it instead of inferring a change from
+`write_date` or from the dates of affected records (a lock date, a journal, a partner, a config
+parameter, a user's rights). The database keeps only the current week; older history sits in
+weekly CSVs in the bucket, and an empty result for an audited model usually means "already
+archived", not "never happened". Read `references/auditlog.md` for the tables, the archive
+layout and how to query a past week.
+
 ## Step 7 — Build the timeline around the failure
 
 ```bash
@@ -276,5 +286,6 @@ Each of these looked like the answer at some point and was not. Check them off q
 ## Reference
 
 - `references/log-formats.md` — the shape of each file in `/home/odoo/logs`, the perf-line fields, the `pg_slow_queries.log` block format and its 30-second capture floor, and the grep patterns for cron lifecycle, deploys and restarts. Read it when a log line is not self-explanatory.
+- `references/auditlog.md` — Odoo 19 audit log: who changed what and when, click-path detail, and how to read weeks already archived to the bucket. Read it when the cause is a change someone made.
 - `references/odoo16.md`, `references/odoo19.md` — what is specific to each version. Read the one that matches the instance.
 - `templates/INDEX.md` — header and column format for a new incident index.
