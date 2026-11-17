@@ -13,6 +13,8 @@ set -euo pipefail
 ECC_REPO="https://github.com/affaan-m/ecc.git"
 ECC_REF="${ECC_REF:-ef648e0}"
 ECC_DIR="${ECC_DIR:-$HOME/dev/ecc}"
+# graphify fork with the Odoo extractor (models, views, ACLs, rules), pinned to a commit
+GRAPHIFY_SPEC="${GRAPHIFY_SPEC:-graphifyy[sql] @ git+https://github.com/weckerleben/graphify@a96504d8aaa7463869837f0f7b98a2f92763f3ad}"
 CLAUDE_DIR="${CLAUDE_DIR:-$HOME/.claude}"
 GIT_NAME="${GIT_NAME:-William Eckerleben}"
 GIT_EMAIL="${GIT_EMAIL:-wgre2000@gmail.com}"
@@ -96,7 +98,7 @@ fi
 
 step "Installing graphify (code knowledge graph CLI + skill)"
 if command -v uv >/dev/null 2>&1; then
-  command -v graphify >/dev/null 2>&1 || run uv tool install graphifyy
+  run uv tool install --force "$GRAPHIFY_SPEC" || warn "graphify install failed"
   run graphify install || warn "graphify install failed"
 else
   warn "uv not found; skipped graphify (install uv, then re-run)"
