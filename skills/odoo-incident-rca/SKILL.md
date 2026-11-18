@@ -286,6 +286,7 @@ Each of these looked like the answer at some point and was not. Check them off q
 ## Reference
 
 - `references/log-formats.md` — the shape of each file in `/home/odoo/logs`, the perf-line fields, the `pg_slow_queries.log` block format and its 30-second capture floor, and the grep patterns for cron lifecycle, deploys and restarts. Read it when a log line is not self-explanatory.
+- `scripts/shifted_dates.py` — read-only comparison of the entries the V16→V19 sync mirrored: lists the ones that landed in V19 with another date than in V16 (documents, aggregates, EP-443 slices), as a CSV plus a summary by company and month. Born from ODOO-383; run it again after any change to locks or to the sync's date handling.
 - `references/auditlog.md` — Odoo 19 audit log: who changed what and when, click-path detail, and how to read weeks already archived to the bucket. Read it when the cause is a change someone made.
 - `references/odoo16.md`, `references/odoo19.md` — what is specific to each version. Read the one that matches the instance.
 - `templates/INDEX.md` — header and column format for a new incident index.
